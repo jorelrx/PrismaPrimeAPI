@@ -2,7 +2,7 @@ using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using PrismaPrimeInvest.Application.DTOs.UserDTOs;
 using PrismaPrimeInvest.Application.Filters;
-using PrismaPrimeInvest.Application.Interfaces.Services;
+using PrismaPrimeInvest.Application.Interfaces.Services.UserInterfaces;
 
 namespace PrismaPrimeInvest.Api.Controllers
 {
