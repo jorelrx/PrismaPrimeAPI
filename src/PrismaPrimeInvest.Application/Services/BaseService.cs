@@ -56,6 +56,8 @@ namespace PrismaPrimeInvest.Application.Services
         {
             await _createValidator.ValidateAndThrowAsync(dto);
             TEntity entity = _mapper.Map<TEntity>(dto);
+            Console.WriteLine("CreatedAt: " + entity.CreatedAt);
+            Console.WriteLine("UpdatedAt: " + entity.UpdatedAt);
             await _repository.CreateAsync(entity);
             return entity.Id;
         }

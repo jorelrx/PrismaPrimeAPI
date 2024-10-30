@@ -1,7 +1,7 @@
 using FluentValidation;
 using PrismaPrimeInvest.Application.DTOs.UserDTOs;
 
-namespace PrismaPrimeInvest.Application.Validations.UserValidation;
+namespace PrismaPrimeInvest.Application.Validations.UserValidations;
 
 public class CreateValidationUser : BaseValidation<CreateUserDto>
 {

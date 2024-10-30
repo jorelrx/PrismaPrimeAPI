@@ -1,6 +1,6 @@
 namespace PrismaPrimeInvest.Application.Filters;
 
-public class FilterUser : FilterBase
+public class FilterFund : FilterBase
 {
     
 }

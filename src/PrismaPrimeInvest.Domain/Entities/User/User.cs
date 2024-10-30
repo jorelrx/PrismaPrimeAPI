@@ -1,4 +1,4 @@
-namespace PrismaPrimeInvest.Domain.Entities
+namespace PrismaPrimeInvest.Domain.Entities.User
 {
     public class User : BaseEntity
     {

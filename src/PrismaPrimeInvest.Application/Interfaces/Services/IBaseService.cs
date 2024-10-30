@@ -1,5 +1,6 @@
 using PrismaPrimeInvest.Application.DTOs;
 using PrismaPrimeInvest.Application.Filters;
+using PrismaPrimeInvest.Domain.Entities;
 
 namespace PrismaPrimeInvest.Application.Interfaces.Services;
 

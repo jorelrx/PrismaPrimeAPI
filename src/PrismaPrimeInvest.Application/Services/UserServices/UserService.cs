@@ -1,12 +1,12 @@
 using AutoMapper;
 using PrismaPrimeInvest.Application.DTOs.UserDTOs;
 using PrismaPrimeInvest.Application.Filters;
-using PrismaPrimeInvest.Application.Interfaces.Services;
-using PrismaPrimeInvest.Application.Validations.UserValidation;
-using PrismaPrimeInvest.Domain.Entities;
-using PrismaPrimeInvest.Domain.Interfaces.Repositories;
+using PrismaPrimeInvest.Application.Interfaces.Services.UserInterfaces;
+using PrismaPrimeInvest.Application.Validations.UserValidations;
+using PrismaPrimeInvest.Domain.Entities.User;
+using PrismaPrimeInvest.Domain.Interfaces.Repositories.UserInterface;
 
-namespace PrismaPrimeInvest.Application.Services;
+namespace PrismaPrimeInvest.Application.Services.UserServices;
 
 public class UserService(
     IUserRepository repository,
