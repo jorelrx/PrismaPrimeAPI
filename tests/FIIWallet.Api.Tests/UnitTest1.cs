@@ -1,4 +1,4 @@
-namespace FIIWallet.Api.Tests;
+namespace PrismaPrimeInvest.Api.Tests;
 
 public class UnitTest1
 {

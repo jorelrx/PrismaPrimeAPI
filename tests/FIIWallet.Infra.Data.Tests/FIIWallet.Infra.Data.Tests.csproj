@@ -21,7 +21,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\FIIWallet.Infra.Data\FIIWallet.Infra.Data.csproj" />
+    <ProjectReference Include="..\..\src\PrismaPrimeInvest.Infra.Data\PrismaPrimeInvest.Infra.Data.csproj" />
   </ItemGroup>
 
 </Project>
