@@ -28,6 +28,8 @@ public class BaseRepository<TEntity>(ApplicationDbContext context) : IBaseReposi
 
     public virtual async Task UpdateAsync(TEntity entity)
     {
+        entity.UpdatedAt = DateTime.UtcNow;
+        _context.Entry(entity).Property(e => e.UpdatedAt).IsModified = true;
         _context.Entry(entity).State = EntityState.Modified;
         await _context.SaveChangesAsync();
     }

@@ -124,3 +124,35 @@ dotnet ef database update --project src/PrismaPrimeInvest.Infra.Data -s src/Pris
 Contribuições são bem-vindas! Sinta-se à vontade para abrir um issue para discutir mudanças que você gostaria de ver ou para submeter um pull request.
 
 ---
+
+## Comandos adicionais
+
+1. **Removendo arquivo appsettings.json do rastreamendo git**:
+   
+   ```bash
+   git update-index --assume-unchanged src/PrismaPrimeInvest.Api/appsettings.json
+   ```
+
+2. **Adicionando arquivo appsettings.json do rastreamendo git**:
+   
+   ```bash
+   git update-index --no-assume-unchanged src/PrismaPrimeInvest.Api/appsettings.json
+   ```
+   
+---
+
+## Objetivos
+### Entidades
+- Usuario
+- Fundo
+
+### Funcionalidades
+- Usuario tem seus fundos
+- Para cada fundo que o usuario tem, deve ter uma quantidade
+- Usuario pode adicionar ou remover fundo
+- Para cada fundo adicionado deve pegar o atual e verificar o ganho com base no valor
+- Para cada fundo, deve mostrar proximo dividendo, valor minimo do fundo, valor maximo, melhor dia de compra,
+
+- Para cada fundo, deve ter uma lista de pagamentos, registrando o valor maximo, minimo, valor pago dividendo e o preço do dia de pagamento
+- Para cada fundo, deve registrar todo dia o maior valor e o menor
+- para cada fundo, deve ter relatorio mensal do fundo

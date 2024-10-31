@@ -10,7 +10,14 @@ public abstract class BaseConfiguration<TEntity> : IEntityTypeConfiguration<TEnt
     {
         builder.HasKey(e => e.Id);
         builder.Property(e => e.Id).ValueGeneratedOnAdd();
-        builder.Property(e => e.CreatedAt).IsRequired().ValueGeneratedOnAdd().HasDefaultValueSql("GETUTCDATE()");;
-        builder.Property(e => e.UpdatedAt).IsRequired().ValueGeneratedOnAddOrUpdate().HasDefaultValueSql("GETUTCDATE()");;
+
+        builder.Property(e => e.CreatedAt)
+            .IsRequired()
+            .ValueGeneratedOnAdd()
+            .HasDefaultValueSql("GETUTCDATE()");
+
+        builder.Property(e => e.UpdatedAt)
+            .IsRequired()
+            .HasDefaultValueSql("GETUTCDATE()");
     }
 }

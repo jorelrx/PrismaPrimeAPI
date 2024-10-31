@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PrismaPrimeInvest.Infra.Data.Contexts;
 
@@ -11,9 +12,11 @@ using PrismaPrimeInvest.Infra.Data.Contexts;
 namespace PrismaPrimeInvest.Infra.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241031001717_AddUserFundRelationship")]
+    partial class AddUserFundRelationship
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -27,9 +30,6 @@ namespace PrismaPrimeInvest.Infra.Data.Migrations
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
-
-                    b.Property<int>("BestBuyDay")
-                        .HasColumnType("int");
 
                     b.Property<string>("Code")
                         .IsRequired()
@@ -54,7 +54,38 @@ namespace PrismaPrimeInvest.Infra.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Fund", (string)null);
+                    b.ToTable("Fund");
+                });
+
+            modelBuilder.Entity("PrismaPrimeInvest.Domain.Entities.Invest.FundBestDay", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("BestDay")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("FundId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<double>("Price")
+                        .HasColumnType("float");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("FundId");
+
+                    b.ToTable("FundBestDay");
                 });
 
             modelBuilder.Entity("PrismaPrimeInvest.Domain.Entities.Invest.FundDailyValue", b =>
@@ -85,7 +116,7 @@ namespace PrismaPrimeInvest.Infra.Data.Migrations
 
                     b.HasIndex("FundId");
 
-                    b.ToTable("FundDailyValue", (string)null);
+                    b.ToTable("FundDailyValue");
                 });
 
             modelBuilder.Entity("PrismaPrimeInvest.Domain.Entities.Invest.FundPayment", b =>
@@ -93,6 +124,12 @@ namespace PrismaPrimeInvest.Infra.Data.Migrations
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("AnalysisMonth")
+                        .HasColumnType("datetime2");
+
+                    b.Property<double>("AverageValue")
+                        .HasColumnType("float");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -115,9 +152,6 @@ namespace PrismaPrimeInvest.Infra.Data.Migrations
                     b.Property<DateTime>("MinimumValueDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime>("PaymentDate")
-                        .HasColumnType("datetime2");
-
                     b.Property<double>("Price")
                         .HasColumnType("float");
 
@@ -128,7 +162,7 @@ namespace PrismaPrimeInvest.Infra.Data.Migrations
 
                     b.HasIndex("FundId");
 
-                    b.ToTable("FundPayment", (string)null);
+                    b.ToTable("FundPayment");
                 });
 
             modelBuilder.Entity("PrismaPrimeInvest.Domain.Entities.Relationships.UserFund", b =>
@@ -145,9 +179,6 @@ namespace PrismaPrimeInvest.Infra.Data.Migrations
                     b.Property<Guid>("FundId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<int>("Quantity")
-                        .HasColumnType("int");
-
                     b.Property<DateTime>("UpdatedAt")
                         .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("datetime2")
@@ -162,7 +193,7 @@ namespace PrismaPrimeInvest.Infra.Data.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("UserFund", (string)null);
+                    b.ToTable("UserFund");
                 });
 
             modelBuilder.Entity("PrismaPrimeInvest.Domain.Entities.User.User", b =>
@@ -195,7 +226,18 @@ namespace PrismaPrimeInvest.Infra.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("User", (string)null);
+                    b.ToTable("User");
+                });
+
+            modelBuilder.Entity("PrismaPrimeInvest.Domain.Entities.Invest.FundBestDay", b =>
+                {
+                    b.HasOne("PrismaPrimeInvest.Domain.Entities.Invest.Fund", "Fund")
+                        .WithMany("FundBestDays")
+                        .HasForeignKey("FundId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Fund");
                 });
 
             modelBuilder.Entity("PrismaPrimeInvest.Domain.Entities.Invest.FundDailyValue", b =>
@@ -241,6 +283,8 @@ namespace PrismaPrimeInvest.Infra.Data.Migrations
 
             modelBuilder.Entity("PrismaPrimeInvest.Domain.Entities.Invest.Fund", b =>
                 {
+                    b.Navigation("FundBestDays");
+
                     b.Navigation("FundDailyValue");
 
                     b.Navigation("FundPayments");

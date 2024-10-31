@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PrismaPrimeInvest.Infra.Data.Contexts;
 
@@ -11,9 +12,11 @@ using PrismaPrimeInvest.Infra.Data.Contexts;
 namespace PrismaPrimeInvest.Infra.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241031014134_UpdateFundsDetails")]
+    partial class UpdateFundsDetails
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -54,7 +57,7 @@ namespace PrismaPrimeInvest.Infra.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Fund", (string)null);
+                    b.ToTable("Fund");
                 });
 
             modelBuilder.Entity("PrismaPrimeInvest.Domain.Entities.Invest.FundDailyValue", b =>
@@ -85,7 +88,7 @@ namespace PrismaPrimeInvest.Infra.Data.Migrations
 
                     b.HasIndex("FundId");
 
-                    b.ToTable("FundDailyValue", (string)null);
+                    b.ToTable("FundDailyValue");
                 });
 
             modelBuilder.Entity("PrismaPrimeInvest.Domain.Entities.Invest.FundPayment", b =>
@@ -128,7 +131,7 @@ namespace PrismaPrimeInvest.Infra.Data.Migrations
 
                     b.HasIndex("FundId");
 
-                    b.ToTable("FundPayment", (string)null);
+                    b.ToTable("FundPayment");
                 });
 
             modelBuilder.Entity("PrismaPrimeInvest.Domain.Entities.Relationships.UserFund", b =>
@@ -162,7 +165,7 @@ namespace PrismaPrimeInvest.Infra.Data.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("UserFund", (string)null);
+                    b.ToTable("UserFund");
                 });
 
             modelBuilder.Entity("PrismaPrimeInvest.Domain.Entities.User.User", b =>
@@ -195,7 +198,7 @@ namespace PrismaPrimeInvest.Infra.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("User", (string)null);
+                    b.ToTable("User");
                 });
 
             modelBuilder.Entity("PrismaPrimeInvest.Domain.Entities.Invest.FundDailyValue", b =>
