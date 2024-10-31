@@ -36,5 +36,5 @@ jobs:
           app-name: 'api-prisma-prime-invest'  # Substitua pelo nome do seu Web App
           publish-profile: ${{ secrets.AZURE_PUBLISH_PROFILE }}  # O perfil de publicação do Azure
           package: './publish'  # O caminho para o pacote a ser implantado
-          env:
-            ConnectionStrings__DefaultConnection: ${{ secrets.AZURE_CONNECTION_STRING }}
+        env:
+          ConnectionStrings__DefaultConnection: ${{ secrets.AZURE_CONNECTION_STRING }}
