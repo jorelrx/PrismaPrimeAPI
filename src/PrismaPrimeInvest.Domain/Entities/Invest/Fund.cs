@@ -7,11 +7,15 @@ public class Fund : BaseEntity
 {
     public required string Name { get; set; }
     public required string Code { get; set; }
-    public FundTypeEnum Type { get; set; }
+    public required double Price { get; set; }
+    public required double MaxPrice { get; set; }
+    public required double MinPrice { get; set; }
     public int BestBuyDay { get; set; }
+    public double BestBuyDayPrice { get; set; }
+    public FundTypeEnum Type { get; set; }
 
-    public ICollection<FundDailyValue>? FundDailyValue { get; set;}
-    public ICollection<FundPayment>? FundPayments { get; set; }
+    public ICollection<FundDailyPrice>? DailyPrices { get; set;}
+    public ICollection<FundPayment>? Payments { get; set; }
 
-    public ICollection<UserFund> UsersFund { get; set; } = [];
+    public ICollection<WalletFund> WalletFunds { get; set; } = [];
 }
