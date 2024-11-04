@@ -4,27 +4,19 @@ using PrismaPrimeInvest.Application.DTOs;
 using PrismaPrimeInvest.Application.Interfaces.Services;
 using PrismaPrimeInvest.Application.Filters;
 using System.Net;
-using System.Threading.Tasks;
-using System.Collections.Generic;
 using PrismaPrimeInvest.Application.Responses;
 
 namespace PrismaPrimeInvest.Api.Controllers
 {
     [ApiController]
-    public abstract class ControllerBase<TDto, TCreateDto, TUpdateDto, TFilter> : ControllerBase
+    public abstract class ControllerBase<TDto, TCreateDto, TUpdateDto, TFilter>(IBaseService<TDto, TCreateDto, TUpdateDto, TFilter> service, IMapper mapper) : ControllerBase
         where TDto : BaseDto
         where TCreateDto : class
         where TUpdateDto : class
         where TFilter : FilterBase, new()
     {
-        private readonly IBaseService<TDto, TCreateDto, TUpdateDto, TFilter> _service;
-        private readonly IMapper _mapper;
-
-        protected ControllerBase(IBaseService<TDto, TCreateDto, TUpdateDto, TFilter> service, IMapper mapper)
-        {
-            _service = service;
-            _mapper = mapper;
-        }
+        private readonly IBaseService<TDto, TCreateDto, TUpdateDto, TFilter> _service = service;
+        private readonly IMapper _mapper = mapper;
 
         [HttpPost]
         public async Task<IActionResult> CreateAsync([FromBody] TCreateDto dto)
@@ -41,14 +33,14 @@ namespace PrismaPrimeInvest.Api.Controllers
 
         [ActionName("GetByIdAsync")]
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetByIdAsync(Guid id)
+        public virtual async Task<IActionResult> GetByIdAsync(Guid id)
         {
-            var user = await _service.GetByIdAsync(id);
+            var entity = await _service.GetByIdAsync(id);
             var response = new ApiResponse<TDto>
             {
                 Id = id,
                 StatusCode = HttpStatusCode.OK,
-                Response = user
+                Response = entity
             };
             return Ok(response);
         }
