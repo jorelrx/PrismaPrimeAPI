@@ -1,5 +1,5 @@
 using FluentValidation;
-using PrismaPrimeInvest.Application.DTOs.InvestDTOs;
+using PrismaPrimeInvest.Application.DTOs.InvestDTOs.Fund;
 
 namespace PrismaPrimeInvest.Application.Validations.FundValidations;
 

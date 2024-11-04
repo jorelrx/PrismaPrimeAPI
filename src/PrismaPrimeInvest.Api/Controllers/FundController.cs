@@ -1,6 +1,6 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
-using PrismaPrimeInvest.Application.DTOs.InvestDTOs;
+using PrismaPrimeInvest.Application.DTOs.InvestDTOs.Fund;
 using PrismaPrimeInvest.Application.Filters;
 using PrismaPrimeInvest.Application.Interfaces.Services.Invest;
 
@@ -12,6 +12,5 @@ namespace PrismaPrimeInvest.Api.Controllers
         IFundService fundService, IMapper mapper
     ) : ControllerBase<FundDto, CreateFundDto, UpdateFundDto, FilterFund>(fundService, mapper)
     {
-        private readonly IFundService _fundService = fundService;
     }
 }

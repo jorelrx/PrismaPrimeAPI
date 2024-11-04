@@ -1,5 +1,5 @@
 using AutoMapper;
-using PrismaPrimeInvest.Application.DTOs.InvestDTOs;
+using PrismaPrimeInvest.Application.DTOs.InvestDTOs.Fund;
 using PrismaPrimeInvest.Application.Filters;
 using PrismaPrimeInvest.Application.Interfaces.Services.Invest;
 using PrismaPrimeInvest.Application.Validations.FundValidations;

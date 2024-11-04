@@ -1,11 +1,11 @@
 using FluentValidation;
-using PrismaPrimeInvest.Application.DTOs.InvestDTOs.Fund;
+using PrismaPrimeInvest.Application.DTOs.InvestDTOs.FundDailyPrice;
 
-namespace PrismaPrimeInvest.Application.Validations.FundValidations;
+namespace PrismaPrimeInvest.Application.Validations.FundDailyPriceValidations;
 
-public class UpdateValidationFund : BaseValidation<UpdateFundDto>
+public class UpdateValidationFundDailyPrice : BaseValidation<UpdateFundDailyPriceDto>
 {
-    public UpdateValidationFund()
+    public UpdateValidationFundDailyPrice()
     {
         RuleFor(x => x.Name)
             .NotEmpty().WithMessage("Name is required.");

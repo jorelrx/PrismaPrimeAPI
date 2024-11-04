@@ -1,4 +1,4 @@
-using PrismaPrimeInvest.Application.DTOs.InvestDTOs;
+using PrismaPrimeInvest.Application.DTOs.InvestDTOs.Fund;
 using PrismaPrimeInvest.Application.Filters;
 
 namespace PrismaPrimeInvest.Application.Interfaces.Services.Invest;
