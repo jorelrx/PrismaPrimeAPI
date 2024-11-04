@@ -134,7 +134,7 @@ namespace PrismaPrimeInvest.Infra.Data.Migrations
                     b.ToTable("FundPayment");
                 });
 
-            modelBuilder.Entity("PrismaPrimeInvest.Domain.Entities.Relationships.UserFund", b =>
+            modelBuilder.Entity("PrismaPrimeInvest.Domain.Entities.Relationships.WalletFund", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -165,7 +165,7 @@ namespace PrismaPrimeInvest.Infra.Data.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("UserFund");
+                    b.ToTable("WalletFund");
                 });
 
             modelBuilder.Entity("PrismaPrimeInvest.Domain.Entities.User.User", b =>
@@ -223,7 +223,7 @@ namespace PrismaPrimeInvest.Infra.Data.Migrations
                     b.Navigation("Fund");
                 });
 
-            modelBuilder.Entity("PrismaPrimeInvest.Domain.Entities.Relationships.UserFund", b =>
+            modelBuilder.Entity("PrismaPrimeInvest.Domain.Entities.Relationships.WalletFund", b =>
                 {
                     b.HasOne("PrismaPrimeInvest.Domain.Entities.Invest.Fund", "Fund")
                         .WithMany("UsersFund")
@@ -232,7 +232,7 @@ namespace PrismaPrimeInvest.Infra.Data.Migrations
                         .IsRequired();
 
                     b.HasOne("PrismaPrimeInvest.Domain.Entities.User.User", "User")
-                        .WithMany("UserFunds")
+                        .WithMany("WalletFunds")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -253,7 +253,7 @@ namespace PrismaPrimeInvest.Infra.Data.Migrations
 
             modelBuilder.Entity("PrismaPrimeInvest.Domain.Entities.User.User", b =>
                 {
-                    b.Navigation("UserFunds");
+                    b.Navigation("WalletFunds");
                 });
 #pragma warning restore 612, 618
         }

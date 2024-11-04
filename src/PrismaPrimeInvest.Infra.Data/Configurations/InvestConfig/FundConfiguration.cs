@@ -10,6 +10,10 @@ public class FundConfiguration : BaseConfiguration<Fund>
         base.Configure(builder);
         builder.Property(e => e.Name).IsRequired();
         builder.Property(e => e.Code).IsRequired();
+        builder.Property(e => e.Price).IsRequired();
+        builder.Property(e => e.MaxPrice).IsRequired();
+        builder.Property(e => e.MinPrice).IsRequired();
+        builder.Property(e => e.BestBuyDay).IsRequired();
         builder.Property(e => e.Type).IsRequired();
     }
 }

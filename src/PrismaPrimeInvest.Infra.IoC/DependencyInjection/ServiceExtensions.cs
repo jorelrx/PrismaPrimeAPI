@@ -14,5 +14,7 @@ public static class ServiceExtensions
     {
         services.AddScoped<IUserService, UserService>();
         services.AddScoped<IFundService, FundService>();
+        services.AddScoped<IFundDailyPriceService, FundDailyPriceService>();
+        services.AddScoped<IFundPaymentService, FundPaymentService>();
     }
 }

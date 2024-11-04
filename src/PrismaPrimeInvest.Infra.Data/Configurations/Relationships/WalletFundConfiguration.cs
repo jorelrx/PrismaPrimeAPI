@@ -4,21 +4,19 @@ using Microsoft.EntityFrameworkCore;
 
 namespace PrismaPrimeInvest.Infra.Data.Configurations.Relationships;
 
-public class UserFundConfiguration : BaseConfiguration<UserFund>
+public class WalletFundConfiguration : BaseConfiguration<WalletFund>
 {
-    public override void Configure(EntityTypeBuilder<UserFund> builder)
+    public override void Configure(EntityTypeBuilder<WalletFund> builder)
     {
         base.Configure(builder);
-
-        builder.Property(p => p.Quantity).IsRequired();
         
-        builder.HasOne(uf => uf.User)
-                .WithMany(u => u.UserFunds)
-                .HasForeignKey(uf => uf.UserId)
+        builder.HasOne(uf => uf.Wallet)
+                .WithMany(u => u.WalletFunds)
+                .HasForeignKey(uf => uf.WalletId)
                 .OnDelete(DeleteBehavior.Cascade);
 
         builder.HasOne(uf => uf.Fund)
-                .WithMany(f => f.UsersFund)
+                .WithMany(f => f.WalletFunds)
                 .HasForeignKey(uf => uf.FundId)
                 .OnDelete(DeleteBehavior.Cascade);
     }

@@ -31,6 +31,9 @@ namespace PrismaPrimeInvest.Infra.Data.Migrations
                     b.Property<int>("BestBuyDay")
                         .HasColumnType("int");
 
+                    b.Property<double>("BestBuyDayPrice")
+                        .HasColumnType("float");
+
                     b.Property<string>("Code")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -40,24 +43,33 @@ namespace PrismaPrimeInvest.Infra.Data.Migrations
                         .HasColumnType("datetime2")
                         .HasDefaultValueSql("GETUTCDATE()");
 
+                    b.Property<double>("MaxPrice")
+                        .HasColumnType("float");
+
+                    b.Property<double>("MinPrice")
+                        .HasColumnType("float");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<double>("Price")
+                        .HasColumnType("float");
 
                     b.Property<int>("Type")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("UpdatedAt")
-                        .ValueGeneratedOnAddOrUpdate()
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
                         .HasDefaultValueSql("GETUTCDATE()");
 
                     b.HasKey("Id");
 
-                    b.ToTable("Fund", (string)null);
+                    b.ToTable("Fund");
                 });
 
-            modelBuilder.Entity("PrismaPrimeInvest.Domain.Entities.Invest.FundDailyValue", b =>
+            modelBuilder.Entity("PrismaPrimeInvest.Domain.Entities.Invest.FundDailyPrice", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -72,10 +84,13 @@ namespace PrismaPrimeInvest.Infra.Data.Migrations
                     b.Property<Guid>("FundId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<double>("MaxValue")
+                    b.Property<double>("MaxPrice")
                         .HasColumnType("float");
 
-                    b.Property<double>("MinValue")
+                    b.Property<double>("MinPrice")
+                        .HasColumnType("float");
+
+                    b.Property<double>("Price")
                         .HasColumnType("float");
 
                     b.Property<DateTime>("UpdatedAt")
@@ -85,7 +100,7 @@ namespace PrismaPrimeInvest.Infra.Data.Migrations
 
                     b.HasIndex("FundId");
 
-                    b.ToTable("FundDailyValue", (string)null);
+                    b.ToTable("FundDailyPrice");
                 });
 
             modelBuilder.Entity("PrismaPrimeInvest.Domain.Entities.Invest.FundPayment", b =>
@@ -103,16 +118,16 @@ namespace PrismaPrimeInvest.Infra.Data.Migrations
                     b.Property<Guid>("FundId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<double>("MaximumValue")
+                    b.Property<double>("MaximumPrice")
                         .HasColumnType("float");
 
-                    b.Property<DateTime>("MaximumValueDate")
+                    b.Property<DateTime>("MaximumPriceDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<double>("MinimumValue")
+                    b.Property<double>("MinimumPrice")
                         .HasColumnType("float");
 
-                    b.Property<DateTime>("MinimumValueDate")
+                    b.Property<DateTime>("MinimumPriceDate")
                         .HasColumnType("datetime2");
 
                     b.Property<DateTime>("PaymentDate")
@@ -128,10 +143,10 @@ namespace PrismaPrimeInvest.Infra.Data.Migrations
 
                     b.HasIndex("FundId");
 
-                    b.ToTable("FundPayment", (string)null);
+                    b.ToTable("FundPayment");
                 });
 
-            modelBuilder.Entity("PrismaPrimeInvest.Domain.Entities.Relationships.UserFund", b =>
+            modelBuilder.Entity("PrismaPrimeInvest.Domain.Entities.Relationships.WalletFund", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -145,24 +160,21 @@ namespace PrismaPrimeInvest.Infra.Data.Migrations
                     b.Property<Guid>("FundId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<int>("Quantity")
-                        .HasColumnType("int");
-
                     b.Property<DateTime>("UpdatedAt")
-                        .ValueGeneratedOnAddOrUpdate()
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
                         .HasDefaultValueSql("GETUTCDATE()");
 
-                    b.Property<Guid>("UserId")
+                    b.Property<Guid>("WalletId")
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
 
                     b.HasIndex("FundId");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("WalletId");
 
-                    b.ToTable("UserFund", (string)null);
+                    b.ToTable("WalletFund");
                 });
 
             modelBuilder.Entity("PrismaPrimeInvest.Domain.Entities.User.User", b =>
@@ -189,19 +201,42 @@ namespace PrismaPrimeInvest.Infra.Data.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("UpdatedAt")
-                        .ValueGeneratedOnAddOrUpdate()
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
                         .HasDefaultValueSql("GETUTCDATE()");
 
                     b.HasKey("Id");
 
-                    b.ToTable("User", (string)null);
+                    b.ToTable("User");
                 });
 
-            modelBuilder.Entity("PrismaPrimeInvest.Domain.Entities.Invest.FundDailyValue", b =>
+            modelBuilder.Entity("PrismaPrimeInvest.Domain.Entities.User.Wallet", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId")
+                        .IsUnique();
+
+                    b.ToTable("Wallet");
+                });
+
+            modelBuilder.Entity("PrismaPrimeInvest.Domain.Entities.Invest.FundDailyPrice", b =>
                 {
                     b.HasOne("PrismaPrimeInvest.Domain.Entities.Invest.Fund", "Fund")
-                        .WithMany("FundDailyValue")
+                        .WithMany("DailyPrices")
                         .HasForeignKey("FundId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -212,7 +247,7 @@ namespace PrismaPrimeInvest.Infra.Data.Migrations
             modelBuilder.Entity("PrismaPrimeInvest.Domain.Entities.Invest.FundPayment", b =>
                 {
                     b.HasOne("PrismaPrimeInvest.Domain.Entities.Invest.Fund", "Fund")
-                        .WithMany("FundPayments")
+                        .WithMany("Payments")
                         .HasForeignKey("FundId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -220,37 +255,54 @@ namespace PrismaPrimeInvest.Infra.Data.Migrations
                     b.Navigation("Fund");
                 });
 
-            modelBuilder.Entity("PrismaPrimeInvest.Domain.Entities.Relationships.UserFund", b =>
+            modelBuilder.Entity("PrismaPrimeInvest.Domain.Entities.Relationships.WalletFund", b =>
                 {
                     b.HasOne("PrismaPrimeInvest.Domain.Entities.Invest.Fund", "Fund")
-                        .WithMany("UsersFund")
+                        .WithMany("WalletFunds")
                         .HasForeignKey("FundId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("PrismaPrimeInvest.Domain.Entities.User.User", "User")
-                        .WithMany("UserFunds")
-                        .HasForeignKey("UserId")
+                    b.HasOne("PrismaPrimeInvest.Domain.Entities.User.Wallet", "Wallet")
+                        .WithMany("WalletFunds")
+                        .HasForeignKey("WalletId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Fund");
+
+                    b.Navigation("Wallet");
+                });
+
+            modelBuilder.Entity("PrismaPrimeInvest.Domain.Entities.User.Wallet", b =>
+                {
+                    b.HasOne("PrismaPrimeInvest.Domain.Entities.User.User", "User")
+                        .WithOne("Wallet")
+                        .HasForeignKey("PrismaPrimeInvest.Domain.Entities.User.Wallet", "UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("User");
                 });
 
             modelBuilder.Entity("PrismaPrimeInvest.Domain.Entities.Invest.Fund", b =>
                 {
-                    b.Navigation("FundDailyValue");
+                    b.Navigation("DailyPrices");
 
-                    b.Navigation("FundPayments");
+                    b.Navigation("Payments");
 
-                    b.Navigation("UsersFund");
+                    b.Navigation("WalletFunds");
                 });
 
             modelBuilder.Entity("PrismaPrimeInvest.Domain.Entities.User.User", b =>
                 {
-                    b.Navigation("UserFunds");
+                    b.Navigation("Wallet")
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("PrismaPrimeInvest.Domain.Entities.User.Wallet", b =>
+                {
+                    b.Navigation("WalletFunds");
                 });
 #pragma warning restore 612, 618
         }

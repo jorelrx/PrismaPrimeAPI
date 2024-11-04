@@ -6,13 +6,13 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace PrismaPrimeInvest.Infra.Data.Migrations
 {
     /// <inheritdoc />
-    public partial class AddUserFundRelationship : Migration
+    public partial class AddWalletFundRelationship : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "UserFund",
+                name: "WalletFund",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
@@ -23,15 +23,15 @@ namespace PrismaPrimeInvest.Infra.Data.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_UserFund", x => x.Id);
+                    table.PrimaryKey("PK_WalletFund", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_UserFund_Fund_FundId",
+                        name: "FK_WalletFund_Fund_FundId",
                         column: x => x.FundId,
                         principalTable: "Fund",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_UserFund_User_UserId",
+                        name: "FK_WalletFund_User_UserId",
                         column: x => x.UserId,
                         principalTable: "User",
                         principalColumn: "Id",
@@ -39,13 +39,13 @@ namespace PrismaPrimeInvest.Infra.Data.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserFund_FundId",
-                table: "UserFund",
+                name: "IX_WalletFund_FundId",
+                table: "WalletFund",
                 column: "FundId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserFund_UserId",
-                table: "UserFund",
+                name: "IX_WalletFund_UserId",
+                table: "WalletFund",
                 column: "UserId");
         }
 
@@ -53,7 +53,7 @@ namespace PrismaPrimeInvest.Infra.Data.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "UserFund");
+                name: "WalletFund");
         }
     }
 }

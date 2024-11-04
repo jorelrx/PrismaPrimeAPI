@@ -25,7 +25,7 @@ namespace PrismaPrimeInvest.Infra.Data.Migrations
 
             migrationBuilder.AddColumn<int>(
                 name: "Quantity",
-                table: "UserFund",
+                table: "WalletFund",
                 type: "int",
                 nullable: false,
                 defaultValue: 0);
@@ -43,7 +43,7 @@ namespace PrismaPrimeInvest.Infra.Data.Migrations
         {
             migrationBuilder.DropColumn(
                 name: "Quantity",
-                table: "UserFund");
+                table: "WalletFund");
 
             migrationBuilder.DropColumn(
                 name: "BestBuyDay",
