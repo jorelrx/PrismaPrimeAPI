@@ -1,4 +1,4 @@
-namespace PrismaPrimeInvest.Application.DTOs.InvestDTOs;
+namespace PrismaPrimeInvest.Application.DTOs.InvestDTOs.Fund;
 
 public class UpdateFundDto
 {
