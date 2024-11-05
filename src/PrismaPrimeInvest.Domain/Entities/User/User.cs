@@ -1,5 +1,3 @@
-using PrismaPrimeInvest.Domain.Entities.Relationships;
-
 namespace PrismaPrimeInvest.Domain.Entities.User
 {
     public class User : BaseEntity

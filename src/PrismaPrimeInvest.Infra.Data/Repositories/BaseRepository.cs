@@ -7,8 +7,8 @@ namespace PrismaPrimeInvest.Infra.Data.Repositories;
 
 public class BaseRepository<TEntity>(ApplicationDbContext context) : IBaseRepository<TEntity> where TEntity : BaseEntity
 {
-    private readonly ApplicationDbContext _context = context;
-    private readonly DbSet<TEntity> _entity  = context.Set<TEntity>();
+    protected readonly ApplicationDbContext _context = context;
+    protected readonly DbSet<TEntity> _entity  = context.Set<TEntity>();
 
     public virtual async Task<TEntity?> GetByIdAsync(Guid id)
     {

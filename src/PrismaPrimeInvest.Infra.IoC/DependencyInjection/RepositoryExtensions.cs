@@ -15,6 +15,7 @@ public static class RepositoryExtensions
     public static void AddRepositories(this IServiceCollection services)
     {
         services.AddScoped<IUserRepository, UserRepository>();
+        services.AddScoped<IWalletRepository, WalletRepository>();
         services.AddScoped<IFundRepository, FundRepository>();
         services.AddScoped<IFundDailyPriceRepository, FundDailyPriceRepository>();
         services.AddScoped<IFundPaymentRepository, FundPaymentRepository>();
