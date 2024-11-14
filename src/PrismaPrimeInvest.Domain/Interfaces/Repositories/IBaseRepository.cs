@@ -1,8 +1,8 @@
-using PrismaPrimeInvest.Domain.Entities;
+using PrismaPrimeInvest.Domain.Interfaces.Entities;
 
 namespace PrismaPrimeInvest.Domain.Interfaces.Repositories;
 
-public interface IBaseRepository<TEntity> where TEntity : BaseEntity
+public interface IBaseRepository<TEntity> where TEntity : IBaseEntity
 {
     Task<TEntity?> GetByIdAsync(Guid Id);
     IQueryable<TEntity> GetAllAsync();

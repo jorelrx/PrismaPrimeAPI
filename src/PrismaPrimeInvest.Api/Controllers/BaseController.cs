@@ -5,82 +5,83 @@ using PrismaPrimeInvest.Application.Interfaces.Services;
 using PrismaPrimeInvest.Application.Filters;
 using System.Net;
 using PrismaPrimeInvest.Application.Responses;
+using Microsoft.AspNetCore.Authorization;
 
-namespace PrismaPrimeInvest.Api.Controllers
+namespace PrismaPrimeInvest.Api.Controllers;
+
+[ApiController]
+[Authorize]
+public abstract class ControllerBase<TDto, TCreateDto, TUpdateDto, TFilter>(IBaseService<TDto, TCreateDto, TUpdateDto, TFilter> service, IMapper mapper) : ControllerBase
+    where TDto : BaseDto
+    where TCreateDto : class
+    where TUpdateDto : class
+    where TFilter : FilterBase, new()
 {
-    [ApiController]
-    public abstract class ControllerBase<TDto, TCreateDto, TUpdateDto, TFilter>(IBaseService<TDto, TCreateDto, TUpdateDto, TFilter> service, IMapper mapper) : ControllerBase
-        where TDto : BaseDto
-        where TCreateDto : class
-        where TUpdateDto : class
-        where TFilter : FilterBase, new()
+    private readonly IBaseService<TDto, TCreateDto, TUpdateDto, TFilter> _service = service;
+    private readonly IMapper _mapper = mapper;
+
+    [HttpPost]
+    public async Task<IActionResult> CreateAsync([FromBody] TCreateDto dto)
     {
-        private readonly IBaseService<TDto, TCreateDto, TUpdateDto, TFilter> _service = service;
-        private readonly IMapper _mapper = mapper;
-
-        [HttpPost]
-        public async Task<IActionResult> CreateAsync([FromBody] TCreateDto dto)
+        var id = await _service.CreateAsync(dto);
+        var response = new ApiResponse<Guid>
         {
-            var id = await _service.CreateAsync(dto);
-            var response = new ApiResponse<Guid>
-            {
-                Id = id,
-                StatusCode = HttpStatusCode.Created,
-                Response = id
-            };
-            return CreatedAtAction(nameof(this.GetByIdAsync), new { id }, response);
-        }
+            Id = id,
+            StatusCode = HttpStatusCode.Created,
+            Response = id
+        };
+        return CreatedAtAction(nameof(this.GetByIdAsync), new { id }, response);
+    }
 
-        [ActionName("GetByIdAsync")]
-        [HttpGet("{id}")]
-        public virtual async Task<IActionResult> GetByIdAsync(Guid id)
+    [ActionName("GetByIdAsync")]
+    [HttpGet("{id}")]
+    public virtual async Task<IActionResult> GetByIdAsync(Guid id)
+    {
+        var entity = await _service.GetByIdAsync(id);
+        var response = new ApiResponse<TDto>
         {
-            var entity = await _service.GetByIdAsync(id);
-            var response = new ApiResponse<TDto>
-            {
-                Id = id,
-                StatusCode = HttpStatusCode.OK,
-                Response = entity
-            };
-            return Ok(response);
-        }
+            Id = id,
+            StatusCode = HttpStatusCode.OK,
+            Response = entity
+        };
+        return Ok(response);
+    }
 
-        [HttpGet]
-        public async Task<IActionResult> GetAllAsync([FromQuery] TFilter filter)
+    [HttpGet]
+    public async Task<IActionResult> GetAllAsync([FromQuery] TFilter filter)
+    {
+        var response = new ApiResponse<List<TDto>>
         {
-            var response = new ApiResponse<List<TDto>>
-            {
-                Id = Guid.NewGuid(),
-                StatusCode = HttpStatusCode.OK,
-                Response = await _service.GetAllAsync(filter)
-            };
-            return Ok(response);
-        }
+            Id = Guid.NewGuid(),
+            StatusCode = HttpStatusCode.OK,
+            Response = await _service.GetAllAsync(filter)
+        };
+        return Ok(response);
+    }
 
-        [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateAsync(Guid id, [FromBody] TUpdateDto dto)
+    [HttpPut("{id}")]
+    public async Task<IActionResult> UpdateAsync(Guid id, [FromBody] TUpdateDto dto)
+    {
+        await _service.UpdateAsync(id, dto);
+        var response = new ApiResponse<Guid>
         {
-            await _service.UpdateAsync(id, dto);
-            var response = new ApiResponse<Guid>
-            {
-                Id = id,
-                StatusCode = HttpStatusCode.NoContent,
-                Response = id
-            };
-            return NoContent();
-        }
+            Id = id,
+            StatusCode = HttpStatusCode.NoContent,
+            Response = id
+        };
+        return NoContent();
+    }
 
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteAsync(Guid id)
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> DeleteAsync(Guid id)
+    {
+        await _service.DeleteAsync(id);
+        var response = new ApiResponse<Guid>
         {
-            await _service.DeleteAsync(id);
-            var response = new ApiResponse<Guid>
-            {
-                Id = id,
-                StatusCode = HttpStatusCode.NoContent,
-                Response = id
-            };
-            return NoContent();
-        }
+            Id = id,
+            StatusCode = HttpStatusCode.NoContent,
+            Response = id
+        };
+        return NoContent();
     }
 }

@@ -1,5 +1,6 @@
 using System.Net;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PrismaPrimeInvest.Application.DTOs.WalletDTOs;
 using PrismaPrimeInvest.Application.Filters;

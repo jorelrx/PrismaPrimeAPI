@@ -1,11 +1,11 @@
 using AutoMapper;
 using PrismaPrimeInvest.Application.Interfaces.Services;
-using PrismaPrimeInvest.Domain.Entities;
 using PrismaPrimeInvest.Domain.Interfaces.Repositories;
 using PrismaPrimeInvest.Application.Filters;
 using PrismaPrimeInvest.Application.DTOs;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
+using PrismaPrimeInvest.Domain.Interfaces.Entities;
 
 namespace PrismaPrimeInvest.Application.Services
 {
@@ -13,7 +13,7 @@ namespace PrismaPrimeInvest.Application.Services
         IBaseRepository<TEntity> repository, 
         IMapper mapper
     ) : IBaseService<TDto, TCreateDto, TUpdateDto, TFilter>
-        where TEntity : BaseEntity
+        where TEntity : class, IBaseEntity
         where TDto : BaseDto
         where TCreateDto : class
         where TUpdateDto : class
@@ -56,8 +56,6 @@ namespace PrismaPrimeInvest.Application.Services
         {
             await _createValidator.ValidateAndThrowAsync(dto);
             TEntity entity = _mapper.Map<TEntity>(dto);
-            Console.WriteLine("CreatedAt: " + entity.CreatedAt);
-            Console.WriteLine("UpdatedAt: " + entity.UpdatedAt);
             await _repository.CreateAsync(entity);
             return entity.Id;
         }

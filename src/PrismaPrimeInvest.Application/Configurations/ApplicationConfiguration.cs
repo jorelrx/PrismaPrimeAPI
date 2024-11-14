@@ -2,6 +2,14 @@ using PrismaPrimeInvest.Infra.Data.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using PrismaPrimeInvest.Domain.Entities.User;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using System.Text;
+using Microsoft.IdentityModel.Tokens;
+using System.Net;
+using Microsoft.AspNetCore.Http;
+using Newtonsoft.Json;
 
 namespace PrismaPrimeInvest.Application.Configurations;
 public static class ApplicationConfiguration
@@ -23,5 +31,78 @@ public static class ApplicationConfiguration
             sqlOptions.EnableRetryOnFailure();
         });
         }, ServiceLifetime.Scoped);
+    }
+
+    public static void ConfigureIdentity(this IServiceCollection services)
+    {
+        services.AddIdentity<User, Role>(options =>
+        {
+            options.User.RequireUniqueEmail = true;
+            options.SignIn.RequireConfirmedAccount = false;
+        })
+        .AddEntityFrameworkStores<ApplicationDbContext>()
+        .AddDefaultTokenProviders();
+    }
+
+    public static void ConfigureJwtAuthentication(this IServiceCollection services, IConfiguration configuration)
+    {
+        var jwtSettings = configuration.GetSection("Jwt");
+        var key = Encoding.UTF8.GetBytes(jwtSettings["SecretKey"]);
+
+        services.AddAuthentication(options =>
+        {
+            options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+            options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+        })
+        .AddJwtBearer(options =>
+        {
+            options.RequireHttpsMetadata = false;
+            options.SaveToken = true;
+            options.TokenValidationParameters = new TokenValidationParameters
+            {
+                ValidateIssuer = true,
+                ValidateAudience = true,
+                ValidateLifetime = true,
+                ValidIssuer = jwtSettings["Issuer"],
+                ValidAudience = jwtSettings["Audience"],
+                IssuerSigningKey = new SymmetricSecurityKey(key)
+            };
+
+            // Customização das mensagens de erro de autenticação e autorização
+            options.Events = new JwtBearerEvents
+            {
+                OnChallenge = context =>
+                {
+                    context.HandleResponse();
+                    context.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
+                    context.Response.ContentType = "application/json";
+
+                    var result = new
+                    {
+                        Id = Guid.NewGuid(),
+                        StatusCode = HttpStatusCode.Unauthorized,
+                        Message = "Authentication failed.",
+                        Response = "You are not authorized to access this resource."
+                    };
+
+                    return context.Response.WriteAsync(JsonConvert.SerializeObject(result));
+                },
+                OnForbidden = context =>
+                {
+                    context.Response.StatusCode = (int)HttpStatusCode.Forbidden;
+                    context.Response.ContentType = "application/json";
+
+                    var result = new
+                    {
+                        Id = Guid.NewGuid(),
+                        StatusCode = HttpStatusCode.Forbidden,
+                        Message = "Authorization failed.",
+                        Response = "You do not have permission to access this resource."
+                    };
+
+                    return context.Response.WriteAsync(JsonConvert.SerializeObject(result));
+                }
+            };
+        });
     }
 }

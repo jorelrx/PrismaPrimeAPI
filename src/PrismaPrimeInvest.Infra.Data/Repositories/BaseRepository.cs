@@ -2,10 +2,11 @@ using PrismaPrimeInvest.Domain.Entities;
 using PrismaPrimeInvest.Domain.Interfaces.Repositories;
 using PrismaPrimeInvest.Infra.Data.Contexts;
 using Microsoft.EntityFrameworkCore;
+using PrismaPrimeInvest.Domain.Interfaces.Entities;
 
 namespace PrismaPrimeInvest.Infra.Data.Repositories;
 
-public class BaseRepository<TEntity>(ApplicationDbContext context) : IBaseRepository<TEntity> where TEntity : BaseEntity
+public class BaseRepository<TEntity>(ApplicationDbContext context) : IBaseRepository<TEntity> where TEntity : class, IBaseEntity
 {
     protected readonly ApplicationDbContext _context = context;
     protected readonly DbSet<TEntity> _entity  = context.Set<TEntity>();

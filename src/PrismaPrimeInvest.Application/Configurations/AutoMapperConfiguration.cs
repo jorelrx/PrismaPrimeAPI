@@ -8,6 +8,7 @@ using PrismaPrimeInvest.Application.DTOs.InvestDTOs.Fund;
 using PrismaPrimeInvest.Application.DTOs.InvestDTOs.FundDailyPrice;
 using PrismaPrimeInvest.Application.DTOs.InvestDTOs.FundPayment;
 using PrismaPrimeInvest.Application.DTOs.WalletDTOs;
+using Microsoft.AspNetCore.Identity;
 
 namespace PrismaPrimeInvest.Application.Configurations;
 public static class AutoMapperConfiguration
@@ -17,7 +18,8 @@ public static class AutoMapperConfiguration
         var mapperConfig = new MapperConfiguration(config =>
         {
             config.CreateMap<User, UserDto>().ReverseMap();
-            config.CreateMap<User, CreateUserDto>().ReverseMap();
+            config.CreateMap<User, CreateUserDto>().ReverseMap()
+                .ForMember(dest => dest.PasswordHash, opt => opt.MapFrom(src => HashPassword(src.Password)));
             config.CreateMap<User, UpdateUserDto>().ReverseMap();
 
             config.CreateMap<Wallet, WalletDto>().ReverseMap();
@@ -47,5 +49,13 @@ public static class AutoMapperConfiguration
         });
 
         services.AddSingleton(mapperConfig.CreateMapper());
+    }
+
+    // Método para fazer o hashing da senha
+    private static string HashPassword(string password)
+    {
+        var passwordHasher = new PasswordHasher<User>();
+        string hash = passwordHasher.HashPassword(null, password);
+        return hash;
     }
 }
