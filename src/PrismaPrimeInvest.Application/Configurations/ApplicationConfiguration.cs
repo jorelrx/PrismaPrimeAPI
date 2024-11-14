@@ -46,8 +46,11 @@ public static class ApplicationConfiguration
 
     public static void ConfigureJwtAuthentication(this IServiceCollection services, IConfiguration configuration)
     {
-        var jwtSettings = configuration.GetSection("Jwt");
-        var key = Encoding.UTF8.GetBytes(jwtSettings["SecretKey"]);
+        IConfigurationSection jwtSettings = configuration.GetSection("Jwt");
+        string? secretKey = jwtSettings["SecretKey"];
+        if (string.IsNullOrEmpty(secretKey))
+            throw new InvalidOperationException("A chave secreta do JWT não foi configurada.");
+        var key = Encoding.UTF8.GetBytes(secretKey);
 
         services.AddAuthentication(options =>
         {
