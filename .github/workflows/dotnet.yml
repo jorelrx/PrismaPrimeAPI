@@ -3,10 +3,10 @@ name: Build and Deploy to Azure Web App
 on:
   push:
     branches:
-      - main  # Aciona o workflow quando houver um push na branch main
+      - main
   pull_request:
     branches:
-      - main  # Aciona o workflow quando houver um PR para a branch main
+      - main
 
 jobs:
   build-and-deploy:
@@ -19,7 +19,7 @@ jobs:
       - name: Setup .NET
         uses: actions/setup-dotnet@v1
         with:
-          dotnet-version: '8.0.x'  # Defina a versão do .NET que você está usando
+          dotnet-version: '8.0.x'
 
       - name: Restore dependencies
         run: dotnet restore
@@ -33,8 +33,13 @@ jobs:
       - name: Deploy to Azure Web App
         uses: Azure/webapps-deploy@v2
         with:
-          app-name: 'prisma-prime-invest-ep'  # Substitua pelo nome do seu Web App
-          publish-profile: ${{ secrets.AZURE_PUBLISH_PROFILE }}  # O perfil de publicação do Azure
-          package: './publish'  # O caminho para o pacote a ser implantado
+          app-name: 'prisma-prime-invest-ep'
+          publish-profile: ${{ secrets.AZURE_PUBLISH_PROFILE }}
+          package: './publish'
         env:
-          ConnectionStrings__DefaultConnection: ${{ secrets.AZURE_CONNECTION_STRING }} # aa
+          ConnectionStrings__DefaultConnection: ${{ secrets.AZURE_CONNECTION_STRING }}
+
+      - name: Apply database migrations
+        run: dotnet ef database update --project src/PrismaPrimeInvest.Infra.Data -s src/PrismaPrimeInvest.Api -c ApplicationDbContext
+        env:
+          ConnectionStrings__DefaultConnection: ${{ secrets.AZURE_CONNECTION_STRING }}
