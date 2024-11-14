@@ -11,8 +11,6 @@ namespace PrismaPrimeInvest.Infra.Data.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropTable("UserFund");
-
             migrationBuilder.DropForeignKey(
                 name: "FK_WalletFund_User_UserId",
                 table: "WalletFund");
@@ -79,7 +77,6 @@ namespace PrismaPrimeInvest.Infra.Data.Migrations
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            // falta refazer create table 
             migrationBuilder.DropForeignKey(
                 name: "FK_WalletFund_Wallet_WalletId",
                 table: "WalletFund");

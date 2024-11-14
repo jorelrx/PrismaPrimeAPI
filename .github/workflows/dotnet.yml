@@ -40,7 +40,7 @@ jobs:
           ConnectionStrings__DefaultConnection: ${{ secrets.AZURE_CONNECTION_STRING }}
 
       - name: Install EF Core CLI
-        run: dotnet tool install --global dotnet-ef --version 8.0.0
+        run: dotnet tool install --global dotnet-ef --version 8.0.10
 
       - name: Apply database migrations
         run: dotnet ef database update --project src/PrismaPrimeInvest.Infra.Data -s src/PrismaPrimeInvest.Api -c ApplicationDbContext

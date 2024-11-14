@@ -24,13 +24,6 @@ namespace PrismaPrimeInvest.Infra.Data.Migrations
                 type: "float",
                 nullable: false,
                 defaultValue: 0.0);
-
-            migrationBuilder.AddColumn<int>(
-                name: "Quantity",
-                table: "WalletFund",
-                type: "int",
-                nullable: false,
-                defaultValue: 0);
         }
 
         /// <inheritdoc />
@@ -42,10 +35,6 @@ namespace PrismaPrimeInvest.Infra.Data.Migrations
 
             migrationBuilder.DropColumn(
                 name: "PurchasePrice",
-                table: "WalletFund");
-
-            migrationBuilder.DropColumn(
-                name: "Quantity",
                 table: "WalletFund");
         }
     }
