@@ -38,6 +38,7 @@ jobs:
           package: './publish'
         env:
           ConnectionStrings__DefaultConnection: ${{ secrets.AZURE_CONNECTION_STRING }}
+          Jwt__SecretKey: ${{ secrets.SECRET_KEY_JWT }}
 
       - name: Install EF Core CLI
         run: dotnet tool install --global dotnet-ef --version 8.0.10
@@ -46,3 +47,4 @@ jobs:
         run: dotnet ef database update --project src/PrismaPrimeInvest.Infra.Data -s src/PrismaPrimeInvest.Api -c ApplicationDbContext
         env:
           ConnectionStrings__DefaultConnection: ${{ secrets.AZURE_CONNECTION_STRING }}
+          Jwt__SecretKey: ${{ secrets.SECRET_KEY_JWT }}
