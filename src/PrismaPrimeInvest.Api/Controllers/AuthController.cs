@@ -53,6 +53,46 @@ public class AuthController(
 
         return Ok(response);
     }
+    
+    [Authorize]
+    [HttpGet("me")]
+    public async Task<IActionResult> GetCurrentUser()
+    {
+        string? userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+        if (string.IsNullOrEmpty(userId))
+        {
+            return Unauthorized(new ApiResponse<string>
+            {
+                Id = Guid.NewGuid(),
+                Status = System.Net.HttpStatusCode.Unauthorized,
+                Message = "User ID not found in token.",
+                Response = null
+            });
+        }
+
+        User? user = await _userManager.FindByIdAsync(userId);
+        if (user == null)
+        {
+            return NotFound(new ApiResponse<string>
+            {
+                Id = Guid.NewGuid(),
+                Status = System.Net.HttpStatusCode.NotFound,
+                Message = "User not found.",
+                Response = null
+            });
+        }
+
+        ApiResponse<User> response = new()
+        {
+            Id = Guid.NewGuid(),
+            Status = System.Net.HttpStatusCode.OK,
+            Message = "User retrieved successfully.",
+            Response = user
+        };
+
+        return Ok(response);
+    }
 
     private string GenerateJwtToken(User user)
     {

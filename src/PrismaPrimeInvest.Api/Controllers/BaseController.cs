@@ -1,11 +1,12 @@
+using System.Net;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
+
 using PrismaPrimeInvest.Application.DTOs;
 using PrismaPrimeInvest.Application.Interfaces.Services;
 using PrismaPrimeInvest.Application.Filters;
-using System.Net;
 using PrismaPrimeInvest.Application.Responses;
-using Microsoft.AspNetCore.Authorization;
 
 namespace PrismaPrimeInvest.Api.Controllers;
 
@@ -21,7 +22,7 @@ public abstract class ControllerBase<TDto, TCreateDto, TUpdateDto, TFilter>(IBas
     private readonly IMapper _mapper = mapper;
 
     [HttpPost]
-    public async Task<IActionResult> CreateAsync([FromBody] TCreateDto dto)
+    public virtual async Task<IActionResult> CreateAsync([FromBody] TCreateDto dto)
     {
         var id = await _service.CreateAsync(dto);
         var response = new ApiResponse<Guid>
@@ -48,7 +49,7 @@ public abstract class ControllerBase<TDto, TCreateDto, TUpdateDto, TFilter>(IBas
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetAllAsync([FromQuery] TFilter filter)
+    public virtual async Task<IActionResult> GetAllAsync([FromQuery] TFilter filter)
     {
         var response = new ApiResponse<List<TDto>>
         {
