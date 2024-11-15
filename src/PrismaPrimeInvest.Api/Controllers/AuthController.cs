@@ -42,7 +42,7 @@ public class AuthController(
         ApiResponse<LoginResponse> response = new()
         {
             Id = Guid.NewGuid(),
-            StatusCode = System.Net.HttpStatusCode.OK,
+            Status = System.Net.HttpStatusCode.OK,
             Response = new LoginResponse
             {
                 Token = token,

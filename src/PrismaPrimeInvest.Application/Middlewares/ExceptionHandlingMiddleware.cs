@@ -7,6 +7,7 @@ using FluentValidation.Results;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 using System.Security.Authentication;
+using Newtonsoft.Json.Serialization;
 
 namespace PrismaPrimeInvest.Application.Middlewares;
 
@@ -45,7 +46,10 @@ public class ExceptionHandlingMiddleware(RequestDelegate next)
         };
         
         context.Response.ContentType = "application/json";
-        return context.Response.WriteAsync(JsonConvert.SerializeObject(response));
+        return context.Response.WriteAsync(JsonConvert.SerializeObject(response, new JsonSerializerSettings
+        {
+            ContractResolver = new CamelCasePropertyNamesContractResolver()
+        }));
     }
 
     private static ApiResponse<object> CreateErrorResponse(HttpContext context, HttpStatusCode statusCode, string message, string details)
@@ -54,7 +58,7 @@ public class ExceptionHandlingMiddleware(RequestDelegate next)
         return new ApiResponse<object>
         {
             Id = Guid.NewGuid(),
-            StatusCode = statusCode,
+            Status = statusCode,
             Message = message,
             Response = details
         };
@@ -74,7 +78,7 @@ public class ExceptionHandlingMiddleware(RequestDelegate next)
         return new ApiResponse<object>
         {
             Id = Guid.NewGuid(),
-            StatusCode = HttpStatusCode.BadRequest,
+            Status = HttpStatusCode.BadRequest,
             Message = "Validation error.",
             Response = new
             {
@@ -94,7 +98,7 @@ public class ExceptionHandlingMiddleware(RequestDelegate next)
         return new ApiResponse<object>
         {
             Id = Guid.NewGuid(),
-            StatusCode = HttpStatusCode.BadRequest,
+            Status = HttpStatusCode.BadRequest,
             Message = "User creation failed due to validation errors.",
             Response = new
             {

@@ -27,7 +27,7 @@ public abstract class ControllerBase<TDto, TCreateDto, TUpdateDto, TFilter>(IBas
         var response = new ApiResponse<Guid>
         {
             Id = id,
-            StatusCode = HttpStatusCode.Created,
+            Status = HttpStatusCode.Created,
             Response = id
         };
         return CreatedAtAction(nameof(this.GetByIdAsync), new { id }, response);
@@ -41,7 +41,7 @@ public abstract class ControllerBase<TDto, TCreateDto, TUpdateDto, TFilter>(IBas
         var response = new ApiResponse<TDto>
         {
             Id = id,
-            StatusCode = HttpStatusCode.OK,
+            Status = HttpStatusCode.OK,
             Response = entity
         };
         return Ok(response);
@@ -53,7 +53,7 @@ public abstract class ControllerBase<TDto, TCreateDto, TUpdateDto, TFilter>(IBas
         var response = new ApiResponse<List<TDto>>
         {
             Id = Guid.NewGuid(),
-            StatusCode = HttpStatusCode.OK,
+            Status = HttpStatusCode.OK,
             Response = await _service.GetAllAsync(filter)
         };
         return Ok(response);
@@ -66,7 +66,7 @@ public abstract class ControllerBase<TDto, TCreateDto, TUpdateDto, TFilter>(IBas
         var response = new ApiResponse<Guid>
         {
             Id = id,
-            StatusCode = HttpStatusCode.NoContent,
+            Status = HttpStatusCode.NoContent,
             Response = id
         };
         return NoContent();
@@ -79,7 +79,7 @@ public abstract class ControllerBase<TDto, TCreateDto, TUpdateDto, TFilter>(IBas
         var response = new ApiResponse<Guid>
         {
             Id = id,
-            StatusCode = HttpStatusCode.NoContent,
+            Status = HttpStatusCode.NoContent,
             Response = id
         };
         return NoContent();

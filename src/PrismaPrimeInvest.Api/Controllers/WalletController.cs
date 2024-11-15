@@ -25,7 +25,7 @@ public class WalletController(
         var response = new ApiResponse<WalletDto>
         {
             Id = userId,
-            StatusCode = HttpStatusCode.OK,
+            Status = HttpStatusCode.OK,
             Response = entity
         };
 

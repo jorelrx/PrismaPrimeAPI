@@ -10,6 +10,8 @@ using Microsoft.IdentityModel.Tokens;
 using System.Net;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
+using PrismaPrimeInvest.Application.Responses;
+using Newtonsoft.Json.Serialization;
 
 namespace PrismaPrimeInvest.Application.Configurations;
 public static class ApplicationConfiguration
@@ -80,30 +82,36 @@ public static class ApplicationConfiguration
                     context.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
                     context.Response.ContentType = "application/json";
 
-                    var result = new
+                    ApiResponse<string> result = new()
                     {
                         Id = Guid.NewGuid(),
-                        StatusCode = HttpStatusCode.Unauthorized,
+                        Status = HttpStatusCode.Unauthorized,
                         Message = "Authentication failed.",
                         Response = "You are not authorized to access this resource."
                     };
 
-                    return context.Response.WriteAsync(JsonConvert.SerializeObject(result));
+                    return context.Response.WriteAsync(JsonConvert.SerializeObject(result, new JsonSerializerSettings
+                    {
+                        ContractResolver = new CamelCasePropertyNamesContractResolver()
+                    }));
                 },
                 OnForbidden = context =>
                 {
                     context.Response.StatusCode = (int)HttpStatusCode.Forbidden;
                     context.Response.ContentType = "application/json";
 
-                    var result = new
+                    ApiResponse<string> result = new()
                     {
                         Id = Guid.NewGuid(),
-                        StatusCode = HttpStatusCode.Forbidden,
+                        Status = HttpStatusCode.Forbidden,
                         Message = "Authorization failed.",
                         Response = "You do not have permission to access this resource."
                     };
 
-                    return context.Response.WriteAsync(JsonConvert.SerializeObject(result));
+                    return context.Response.WriteAsync(JsonConvert.SerializeObject(result, new JsonSerializerSettings
+                    {
+                        ContractResolver = new CamelCasePropertyNamesContractResolver()
+                    }));
                 }
             };
         });
