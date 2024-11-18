@@ -11,4 +11,23 @@ namespace PrismaPrimeInvest.Application.Services.Invest;
 public class FundDailyPriceService(
     IFundDailyPriceRepository repository,
     IMapper mapper
-) : BaseService<FundDailyPrice, FundDailyPriceDto, CreateFundDailyPriceDto, UpdateFundDailyPriceDto, CreateValidationFundDailyPrice, UpdateValidationFundDailyPrice, FilterFundDailyPrice>(repository, mapper), IFundDailyPriceService {}
+) : BaseService<
+    FundDailyPrice, 
+    FundDailyPriceDto, 
+    CreateFundDailyPriceDto, 
+    UpdateFundDailyPriceDto, 
+    CreateValidationFundDailyPrice, 
+    UpdateValidationFundDailyPrice, 
+    FilterFundDailyPrice
+>(repository, mapper), IFundDailyPriceService 
+{
+    protected override IQueryable<FundDailyPrice> ApplyFilters(IQueryable<FundDailyPrice> query, FilterFundDailyPrice filter)
+    {
+        query = base.ApplyFilters(query, filter);
+        
+        if (filter.Date.HasValue)
+            query = query.Where(x => x.Date == filter.Date.Value);
+
+        return query;
+    }
+}
