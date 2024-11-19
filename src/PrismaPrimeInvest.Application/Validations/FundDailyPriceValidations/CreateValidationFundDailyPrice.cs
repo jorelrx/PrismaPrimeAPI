@@ -10,8 +10,11 @@ public class CreateValidationFundDailyPrice : BaseValidation<CreateFundDailyPric
         RuleFor(x => x.Date)
             .NotEmpty().WithMessage("Date is required.");
 
-        RuleFor(x => x.Price)
-            .NotEmpty().WithMessage("Price is required.");
+        RuleFor(x => x.OpenPrice)
+            .NotEmpty().WithMessage("OpenPrice is required.");
+
+        RuleFor(x => x.ClosePrice)
+            .NotEmpty().WithMessage("ClosePrice is required.");
 
         RuleFor(x => x.MaxPrice)
             .NotEmpty().WithMessage("MaxPrice is required.");
