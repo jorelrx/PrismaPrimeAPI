@@ -7,13 +7,19 @@ public class CreateValidationFundDailyPrice : BaseValidation<CreateFundDailyPric
 {
     public CreateValidationFundDailyPrice()
     {
-        RuleFor(x => x.Name)
-            .NotEmpty().WithMessage("Name is required.");
+        RuleFor(x => x.Date)
+            .NotEmpty().WithMessage("Date is required.");
 
-        RuleFor(x => x.Code)
-            .NotEmpty().WithMessage("Code is required.");
+        RuleFor(x => x.Price)
+            .NotEmpty().WithMessage("Price is required.");
 
-        RuleFor(x => x.Type)
-            .NotEmpty().WithMessage("Type is required.");
+        RuleFor(x => x.MaxPrice)
+            .NotEmpty().WithMessage("MaxPrice is required.");
+
+        RuleFor(x => x.MinPrice)
+            .NotEmpty().WithMessage("MinPrice is required.");
+
+        RuleFor(x => x.FundId)
+            .NotEmpty().WithMessage("FundId is required.");
     }
 }

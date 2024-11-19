@@ -26,7 +26,11 @@ public static class AutoMapperConfiguration
             config.CreateMap<Wallet, CreateWalletDto>().ReverseMap();
             config.CreateMap<Wallet, UpdateWalletDto>().ReverseMap();
 
-            config.CreateMap<FundDailyPrice, FundDailyPriceDto>().ReverseMap();
+            config.CreateMap<FundDailyPrice, FundDailyPriceDto>()
+                .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Fund.Name))
+                .ForMember(dest => dest.Code, opt => opt.MapFrom(src => src.Fund.Code))
+                .ForMember(dest => dest.Type, opt => opt.MapFrom(src => src.Fund.Type.ToString()));
+
             config.CreateMap<FundDailyPrice, CreateFundDailyPriceDto>().ReverseMap();
             config.CreateMap<FundDailyPrice, UpdateFundDailyPriceDto>().ReverseMap();
 

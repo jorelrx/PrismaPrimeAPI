@@ -1,4 +1,5 @@
 using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using PrismaPrimeInvest.Application.DTOs.InvestDTOs.FundDailyPrice;
 using PrismaPrimeInvest.Application.Filters;
 using PrismaPrimeInvest.Application.Interfaces.Services.Invest;
@@ -26,8 +27,19 @@ public class FundDailyPriceService(
         query = base.ApplyFilters(query, filter);
         
         if (filter.Date.HasValue)
-            query = query.Where(x => x.Date == filter.Date.Value);
+            query = query.Where(x => x.Date.Date == filter.Date.Value.Date);
+
+        if (filter.FundId != null)
+            query = query.Where(x => x.FundId == filter.FundId);
 
         return query;
+    }
+
+    public override async Task<List<FundDailyPriceDto>> GetAllAsync(FilterFundDailyPrice filter)
+    {
+        var query = _repository.GetAllAsync();
+        query = ApplyFilters(query, filter);
+        var entities = await query.Include(p => p.Fund).ToListAsync();
+        return _mapper.Map<List<FundDailyPriceDto>>(entities);
     }
 }
