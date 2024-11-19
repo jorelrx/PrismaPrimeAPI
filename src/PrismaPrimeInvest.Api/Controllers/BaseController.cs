@@ -18,7 +18,7 @@ public abstract class ControllerBase<TDto, TCreateDto, TUpdateDto, TFilter>(IBas
     where TUpdateDto : class
     where TFilter : FilterBase, new()
 {
-    private readonly IBaseService<TDto, TCreateDto, TUpdateDto, TFilter> _service = service;
+    protected readonly IBaseService<TDto, TCreateDto, TUpdateDto, TFilter> _service = service;
     private readonly IMapper _mapper = mapper;
 
     [HttpPost]
