@@ -15,6 +15,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PrismaPrimeInvest.Infra.Dat
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PrismaPrimeInvest.Infra.IoC", "src\PrismaPrimeInvest.Infra.IoC\PrismaPrimeInvest.Infra.IoC.csproj", "{94AC63B0-DF32-487A-91AD-F9139394BCC8}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PrismaPrimeInvest.AssetJobRunner", "src\PrismaPrimeInvest.AssetJobRunner\PrismaPrimeInvest.AssetJobRunner.csproj", "{6BC92F04-A97E-4251-AE8A-0856F8582BF6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -44,6 +46,10 @@ Global
 		{94AC63B0-DF32-487A-91AD-F9139394BCC8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{94AC63B0-DF32-487A-91AD-F9139394BCC8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{94AC63B0-DF32-487A-91AD-F9139394BCC8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6BC92F04-A97E-4251-AE8A-0856F8582BF6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6BC92F04-A97E-4251-AE8A-0856F8582BF6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6BC92F04-A97E-4251-AE8A-0856F8582BF6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6BC92F04-A97E-4251-AE8A-0856F8582BF6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{BD22CB7C-B4DD-4A7C-9A47-B404577A62B1} = {C87BC050-B2F9-4A24-9966-3C41FD9F5CB8}
@@ -51,5 +57,6 @@ Global
 		{E468BFF0-467B-4E1C-AC89-17861C0B88D1} = {C87BC050-B2F9-4A24-9966-3C41FD9F5CB8}
 		{63DE63C8-D739-49F1-94ED-10193F844235} = {C87BC050-B2F9-4A24-9966-3C41FD9F5CB8}
 		{94AC63B0-DF32-487A-91AD-F9139394BCC8} = {C87BC050-B2F9-4A24-9966-3C41FD9F5CB8}
+		{6BC92F04-A97E-4251-AE8A-0856F8582BF6} = {C87BC050-B2F9-4A24-9966-3C41FD9F5CB8}
 	EndGlobalSection
 EndGlobal
