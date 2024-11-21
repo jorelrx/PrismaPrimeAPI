@@ -14,7 +14,11 @@ builder.Services
     .AddApplicationInsightsTelemetryWorkerService()
     .ConfigureFunctionsApplicationInsights();
 
+builder.Services.AddScoped<HttpClient>();
+builder.Services.AddScoped<AssetHttpService>();
+
 builder.Services.AddScoped<StatusInvestService>();
+builder.Services.AddScoped<FundDailyPriceSyncService>();
 
 builder.Services.ConfigureDatabase(builder.Configuration);
 builder.Services.AddInfrastructure();
