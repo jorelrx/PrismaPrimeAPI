@@ -6,6 +6,7 @@ using PrismaPrimeInvest.Application.DTOs;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using PrismaPrimeInvest.Domain.Interfaces.Entities;
+using PrismaPrimeInvest.Application.Extensions;
 
 namespace PrismaPrimeInvest.Application.Services
 {
@@ -35,6 +36,12 @@ namespace PrismaPrimeInvest.Application.Services
             if (filter.UpdatedAt.HasValue)
                 query = query.Where(e => e.UpdatedAt.Date == filter.UpdatedAt.Value.Date);
 
+            if (!string.IsNullOrEmpty(filter.OrderBy))
+            {
+                bool order = filter.OrderDirection != false;
+                query = query.OrderByDynamic(filter.OrderBy, order);
+            }
+
             return query;
         }
 
@@ -60,6 +67,13 @@ namespace PrismaPrimeInvest.Application.Services
             return entity.Id;
         }
 
+        public virtual async Task<List<Guid>> CreateManyAsync(IEnumerable<TCreateDto> dtos)
+        {
+            var entities = _mapper.Map<List<TEntity>>(dtos);
+            await _repository.CreateManyAsync(entities);
+            return entities.Select(e => e.Id).ToList();
+        }
+
         public virtual async Task UpdateAsync(Guid id, TUpdateDto dto)
         {
             await _updateValidator.ValidateAndThrowAsync(dto);
@@ -68,6 +82,17 @@ namespace PrismaPrimeInvest.Application.Services
 
             _mapper.Map(dto, entity);
             await _repository.UpdateAsync(entity);
+        }
+
+        public virtual async Task UpdateManyAsync(IEnumerable<TUpdateDto> dtos)
+        {
+            foreach (var dto in dtos)
+            {
+                await _updateValidator.ValidateAndThrowAsync(dto);
+            }
+
+            var entities = _mapper.Map<IEnumerable<TEntity>>(dtos);
+            await _repository.UpdateManyAsync(entities);
         }
 
         public virtual async Task DeleteAsync(Guid id)

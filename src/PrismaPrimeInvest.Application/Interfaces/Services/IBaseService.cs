@@ -13,6 +13,8 @@ public interface IBaseService<TDto, TCreateDto, TUpdateDto, TFilter>
     Task<TDto> GetByIdAsync(Guid id);
     Task<List<TDto>> GetAllAsync(TFilter filter);
     Task<Guid> CreateAsync(TCreateDto dto);
+    Task<List<Guid>> CreateManyAsync(IEnumerable<TCreateDto> dtos);
     Task UpdateAsync(Guid id, TUpdateDto dto);
     Task DeleteAsync(Guid id);
+    Task UpdateManyAsync(IEnumerable<TUpdateDto> dtos);
 }

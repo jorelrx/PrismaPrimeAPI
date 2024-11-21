@@ -32,6 +32,8 @@ public class FundDailyPriceService(
         if (filter.FundId != null)
             query = query.Where(x => x.FundId == filter.FundId);
 
+        query = query.OrderBy(x => x.Date);
+
         return query;
     }
 
@@ -39,7 +41,8 @@ public class FundDailyPriceService(
     {
         var query = _repository.GetAllAsync();
         query = ApplyFilters(query, filter);
-        var entities = await query.Include(p => p.Fund).ToListAsync();
+        List<FundDailyPrice>? entities = await query.Include(p => p.Fund).Where(p => p.Fund.Id == p.FundId).ToListAsync();
+        Console.WriteLine(entities.Count);
         return _mapper.Map<List<FundDailyPriceDto>>(entities);
     }
 }

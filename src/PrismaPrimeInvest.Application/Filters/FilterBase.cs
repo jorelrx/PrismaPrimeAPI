@@ -1,9 +1,10 @@
-namespace PrismaPrimeInvest.Application.Filters
+namespace PrismaPrimeInvest.Application.Filters;
+
+public abstract class FilterBase
 {
-    public abstract class FilterBase
-    {
-        public Guid? Id { get; set; }
-        public DateTime? CreatedAt { get; set; }
-        public DateTime? UpdatedAt { get; set; }
-    }
+    public Guid? Id { get; set; }
+    public DateTime? CreatedAt { get; set; }
+    public DateTime? UpdatedAt { get; set; }
+    public string? OrderBy { get; set; }
+    public bool? OrderDirection { get; set; }
 }

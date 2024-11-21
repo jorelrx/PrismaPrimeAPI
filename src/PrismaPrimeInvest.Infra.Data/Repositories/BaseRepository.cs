@@ -27,11 +27,44 @@ public class BaseRepository<TEntity>(ApplicationDbContext context) : IBaseReposi
         await _context.SaveChangesAsync();
     }
 
+    public virtual async Task CreateManyAsync(IEnumerable<TEntity> entities)
+    {
+        await _entity.AddRangeAsync(entities);
+        await _context.SaveChangesAsync();
+    }
+
     public virtual async Task UpdateAsync(TEntity entity)
     {
         entity.UpdatedAt = DateTime.UtcNow;
         _context.Entry(entity).Property(e => e.UpdatedAt).IsModified = true;
         _context.Entry(entity).State = EntityState.Modified;
+        await _context.SaveChangesAsync();
+    }
+
+    public virtual async Task UpdateManyAsync(IEnumerable<TEntity> entities)
+    {
+        foreach (var entity in entities)
+        {
+            // Atualizar o campo de data
+            entity.UpdatedAt = DateTime.UtcNow;
+
+            // Verificar se a entidade já está sendo rastreada
+            var trackedEntity = _context.ChangeTracker.Entries<TEntity>()
+                .FirstOrDefault(e => e.Entity.Id == entity.Id);
+
+            if (trackedEntity != null)
+            {
+                // Atualizar valores do rastreamento atual
+                trackedEntity.CurrentValues.SetValues(entity);
+                trackedEntity.State = EntityState.Modified;
+            }
+            else
+            {
+                // Anexar a entidade ao contexto se não estiver rastreada
+                _context.Attach(entity).State = EntityState.Modified;
+            }
+        }
+
         await _context.SaveChangesAsync();
     }
 
