@@ -7,13 +7,16 @@ public class CreateValidationFundPayment : BaseValidation<CreateFundPaymentDto>
 {
     public CreateValidationFundPayment()
     {
-        RuleFor(x => x.Name)
-            .NotEmpty().WithMessage("Name is required.");
+        RuleFor(x => x.Price)
+            .NotEmpty().WithMessage("Price is required.");
 
-        RuleFor(x => x.Code)
-            .NotEmpty().WithMessage("Code is required.");
+        RuleFor(x => x.Dividend)
+            .NotEmpty().WithMessage("Dividend is required.");
 
-        RuleFor(x => x.Type)
-            .NotEmpty().WithMessage("Type is required.");
+        RuleFor(x => x.MinimumPrice)
+            .NotEmpty().WithMessage("MinimumPrice is required.");
+            
+        RuleFor(x => x.MaximumPrice)
+            .NotEmpty().WithMessage("MaximumPrice is required.");
     }
 }

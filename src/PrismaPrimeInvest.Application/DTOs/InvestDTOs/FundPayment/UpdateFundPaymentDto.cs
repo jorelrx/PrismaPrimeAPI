@@ -2,7 +2,11 @@ namespace PrismaPrimeInvest.Application.DTOs.InvestDTOs.FundPayment;
 
 public class UpdateFundPaymentDto
 {
-    public required string Name { get; set; }
-    public required string Code { get; set; }
-    public required string Type { get; set; }
+    public required Guid Id { get; set; }
+    public double Price { get; set; }
+    public double Dividend { get; set; }
+    public double MinimumPrice { get; set; }
+    public double MaximumPrice { get; set; }
+    public DateTime MinimumPriceDate { get; set; }
+    public DateTime MaximumPriceDate { get; set; }
 }
