@@ -14,11 +14,13 @@ public class SyncFundDataFunction(
     ILoggerFactory loggerFactory,
     IFundService fundService,
     FundDailyPriceSyncService dailyPriceSyncService,
+    FundPaymentSyncService fundPaymentSyncService,
     AssetHttpService assetHttpService)
 {
     private readonly ILogger _logger = loggerFactory.CreateLogger<SyncFundDataFunction>();
     private readonly IFundService _fundService = fundService;
     private readonly FundDailyPriceSyncService _dailyPriceSyncService = dailyPriceSyncService;
+    private readonly FundPaymentSyncService _fundPaymentSyncService = fundPaymentSyncService;
     private readonly AssetHttpService _assetHttpService = assetHttpService;
 
     [Function("SyncFundData")]
@@ -76,6 +78,16 @@ public class SyncFundDataFunction(
             await _dailyPriceSyncService.SyncFundDailyPrices(fund, filledDailyPrices);
 
             _logger.LogInformation($"{ticker} Asset Prices Updated.");
+
+            _logger.LogInformation($"Start sync FundPayments");
+
+            EarningsResponse? earningsResponse = await _assetHttpService.GetEarningsAsync(ticker, assetType);
+            if (earningsResponse != null)
+            {
+                await _fundPaymentSyncService.SyncFundPayments(fund.Id, earningsResponse);
+            }
+
+            _logger.LogInformation($"FundPayments updated!");
 
             var successResponse = req.CreateResponse(System.Net.HttpStatusCode.OK);
             await successResponse.WriteStringAsync($"Fund daily prices for '{ticker}' synced successfully.");

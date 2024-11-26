@@ -19,6 +19,7 @@ builder.Services.AddScoped<AssetHttpService>();
 
 builder.Services.AddScoped<StatusInvestService>();
 builder.Services.AddScoped<FundDailyPriceSyncService>();
+builder.Services.AddScoped<FundPaymentSyncService>();
 
 builder.Services.ConfigureDatabase(builder.Configuration);
 builder.Services.AddInfrastructure();

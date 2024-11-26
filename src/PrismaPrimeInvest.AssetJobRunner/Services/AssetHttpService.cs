@@ -13,9 +13,10 @@ public class AssetHttpService(HttpClient httpClient)
     {
         string urlParamReferrer = typeAsset == 1 ? "fiagros" : "fundos-imobiliarios";
         string urlParamRequest = typeAsset == 1 ? "fiagro" : "fii";
+        string urlParamRequest2 = typeAsset == 1 ? "tickerprovents" : "companytickerprovents";
 
         var request = new HttpRequestMessage(HttpMethod.Get, 
-            $"https://statusinvest.com.br/{urlParamRequest}/companytickerprovents?ticker={ticker}&chartProventsType=2");
+            $"https://statusinvest.com.br/{urlParamRequest}/{urlParamRequest2}?ticker={ticker}&chartProventsType=2");
 
         AddCommonHeaders(request);
         request.Headers.Referrer = new Uri($"https://statusinvest.com.br/{urlParamReferrer}/{ticker.ToLower()}");
