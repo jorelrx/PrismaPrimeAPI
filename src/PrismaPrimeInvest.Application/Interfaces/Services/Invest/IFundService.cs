@@ -8,4 +8,5 @@ public interface IFundService : IBaseService<FundDto, CreateFundDto, UpdateFundD
 {
     Task<List<Fund>> GetAllEntitiesAsync(FilterFund filter);
     Task<Fund?> GetByCodeAsync(string code);
+    Task<List<MonthlyInvestmentReport>> AnalyzeInvestment(string ticker, int PurchaseDay, double BaseAmount);
 }

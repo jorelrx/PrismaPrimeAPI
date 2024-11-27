@@ -6,6 +6,7 @@ using PrismaPrimeInvest.Application.DTOs.InvestDTOs.Fund;
 using PrismaPrimeInvest.Application.Filters;
 using PrismaPrimeInvest.Application.Interfaces.Services.Invest;
 using PrismaPrimeInvest.Application.Responses;
+using PrismaPrimeInvest.Application.Services.Invest;
 
 namespace PrismaPrimeInvest.Api.Controllers;
 
@@ -15,7 +16,7 @@ public class FundController(
     IFundService fundService, IMapper mapper
 ) : ControllerBase<FundDto, CreateFundDto, UpdateFundDto, FilterFund>(fundService, mapper)
 {
-    private readonly IFundService _service = fundService;
+    private readonly IFundService _fundService = fundService;
 
     [AllowAnonymous]
     [ActionName("GetByIdAsync")]
@@ -42,6 +43,20 @@ public class FundController(
             Status = HttpStatusCode.OK,
             Response = await _service.GetAllAsync(filter)
         };
+        return Ok(response);
+    }
+
+    [AllowAnonymous]
+    [HttpGet("analyze-investment/{ticker}")]
+    public async Task<IActionResult> AnalyzeInvestment(string ticker, [FromQuery] InvestmentRequestDto request)
+    {
+        var response = new ApiResponse<List<MonthlyInvestmentReport>>
+        {
+            Id = Guid.NewGuid(),
+            Status = HttpStatusCode.OK,
+            Response = await _fundService.AnalyzeInvestment(ticker, request.PurchaseDay, request.BaseAmount)
+        };
+        
         return Ok(response);
     }
 }
