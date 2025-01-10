@@ -42,7 +42,7 @@ public class FundService(
 
     public override async Task<Guid> CreateAsync(CreateFundDto dto)
     {
-        _logger.LogInformation("Iniciando criação de um asset");
+        _logger.LogWarning("Iniciando criação de um asset");
         await _createValidator.ValidateAndThrowAsync(dto);
         
         _logger.LogInformation("Downloading asset report");
