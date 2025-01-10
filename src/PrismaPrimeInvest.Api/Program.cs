@@ -5,6 +5,12 @@ using System.Text.Json;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Logging.AddApplicationInsights(
+    configureTelemetryConfiguration: config =>
+        config.ConnectionString = builder.Configuration["ApplicationInsights:ConnectionString"],
+    configureApplicationInsightsLoggerOptions: options => { }
+);
+
 // Configurações de serviços
 builder.Services.ConfigureDatabase(builder.Configuration);
 builder.Services.ConfigureIdentity();

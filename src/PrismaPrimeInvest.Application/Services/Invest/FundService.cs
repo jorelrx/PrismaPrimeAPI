@@ -22,11 +22,11 @@ public class FundService(
     IFundPaymentService fundPaymentService,
     IAssetReportDownloader assetReportDownloader,
     AssetHttpService assetHttpService,
-    ILogger logger,
+    ILogger<FundService> logger,
     IMapper mapper
 ) : BaseService<Fund, FundDto, CreateFundDto, UpdateFundDto, CreateValidationFund, UpdateValidationFund, FilterFund>(repository, mapper), IFundService 
 {
-    private readonly ILogger _logger = logger;
+    private readonly ILogger<FundService> _logger = logger;
     private readonly IFundDailyPriceService _fundDailyPriceService = fundDailyPriceService;
     private readonly IFundPaymentService _fundPaymentService = fundPaymentService;
     private readonly IAssetReportDownloader _assetReportDownloader = assetReportDownloader;
