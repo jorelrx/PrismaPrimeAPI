@@ -26,12 +26,13 @@ public class AssetHttpService(HttpClient httpClient, ILogger<AssetHttpService> l
             AddCommonHeaders(request);
             request.Headers.Referrer = new Uri($"https://statusinvest.com.br/{urlParamReferrer}/{ticker.ToLower()}");
 
-            _logger.LogDebug("Enviando requisição para URL: {Url}", request.RequestUri);
+            _logger.LogInformation("Enviando requisição para URL: {Url}", request.RequestUri);
             var response = await _httpClient.SendAsync(request);
             response.EnsureSuccessStatusCode();
 
             var content = await response.Content.ReadAsStringAsync();
-            _logger.LogDebug("Resposta recebida com sucesso para o ticker: {Ticker}", ticker);
+            _logger.LogInformation("Resposta recebida com sucesso para o ticker: {Ticker}", ticker);
+            _logger.LogInformation($"content: {content}");
 
             return JsonSerializer.Deserialize<EarningsResponse>(content, new JsonSerializerOptions
             {
@@ -61,12 +62,13 @@ public class AssetHttpService(HttpClient httpClient, ILogger<AssetHttpService> l
             var payload = $"ticker={ticker}&type=4&currences%5B%5D=1";
             request.Content = new StringContent(payload, Encoding.UTF8, "application/x-www-form-urlencoded");
 
-            _logger.LogDebug("Enviando requisição para URL: {Url} com payload: {Payload}", request.RequestUri, payload);
+            _logger.LogInformation("Enviando requisição para URL: {Url} com payload: {Payload}", request.RequestUri, payload);
             var response = await _httpClient.SendAsync(request);
             response.EnsureSuccessStatusCode();
 
             var content = await response.Content.ReadAsStringAsync();
-            _logger.LogDebug("Resposta recebida com sucesso para o ticker: {Ticker}", ticker);
+            _logger.LogInformation("Resposta recebida com sucesso para o ticker: {Ticker}", ticker);
+            _logger.LogInformation($"content: {content}");
 
             return JsonSerializer.Deserialize<IEnumerable<DailyPriceResponse>>(content, new JsonSerializerOptions
             {
