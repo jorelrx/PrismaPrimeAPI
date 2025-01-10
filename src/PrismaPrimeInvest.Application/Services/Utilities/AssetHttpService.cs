@@ -1,3 +1,4 @@
+using System.Net;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -6,33 +7,43 @@ using PrismaPrimeInvest.Application.DTOs.ResponsesDTOs;
 
 namespace PrismaPrimeInvest.Application.Services.Utilities;
 
-public class AssetHttpService(HttpClient httpClient, ILogger<AssetHttpService> logger)
+public class AssetHttpService
 {
-    private readonly HttpClient _httpClient = httpClient;
-    private readonly ILogger<AssetHttpService> _logger = logger;
+    private static readonly HttpClient Client = new(new HttpClientHandler
+    {
+        UseCookies = true,
+        CookieContainer = new CookieContainer(),
+        AllowAutoRedirect = true
+    });
+
+    private readonly ILogger<AssetHttpService> _logger;
+
+    public AssetHttpService(ILogger<AssetHttpService> logger)
+    {
+        _logger = logger;
+    }
 
     public async Task<EarningsResponse?> GetEarningsAsync(string ticker, int typeAsset)
     {
         _logger.LogInformation("Iniciando método GetEarningsAsync para o ticker: {Ticker}, tipo de ativo: {TypeAsset}", ticker, typeAsset);
+
         try
         {
             string urlParamReferrer = typeAsset == 1 ? "fiagros" : "fundos-imobiliarios";
             string urlParamRequest = typeAsset == 1 ? "fiagro" : "fii";
             string urlParamRequest2 = typeAsset == 1 ? "tickerprovents" : "companytickerprovents";
 
-            var request = new HttpRequestMessage(HttpMethod.Get, 
-                $"https://statusinvest.com.br/{urlParamRequest}/{urlParamRequest2}?ticker={ticker}&chartProventsType=2");
+            string requestUrl = $"https://statusinvest.com.br/{urlParamRequest}/{urlParamRequest2}?ticker={ticker}&chartProventsType=2";
+            var request = new HttpRequestMessage(HttpMethod.Get, requestUrl);
 
-            AddCommonHeaders(request);
-            request.Headers.Referrer = new Uri($"https://statusinvest.com.br/{urlParamReferrer}/{ticker.ToLower()}");
+            ConfigureRequestHeaders(request, $"https://statusinvest.com.br/{urlParamReferrer}/{ticker.ToLower()}");
 
             _logger.LogInformation("Enviando requisição para URL: {Url}", request.RequestUri);
-            var response = await _httpClient.SendAsync(request);
+            var response = await Client.SendAsync(request);
             response.EnsureSuccessStatusCode();
 
             var content = await response.Content.ReadAsStringAsync();
             _logger.LogInformation("Resposta recebida com sucesso para o ticker: {Ticker}", ticker);
-            _logger.LogInformation($"content: {content}");
 
             return JsonSerializer.Deserialize<EarningsResponse>(content, new JsonSerializerOptions
             {
@@ -50,25 +61,26 @@ public class AssetHttpService(HttpClient httpClient, ILogger<AssetHttpService> l
     public async Task<IEnumerable<DailyPriceResponse>?> GetDailyPricesByTickerAsync(string ticker, int typeAsset)
     {
         _logger.LogInformation("Iniciando método GetDailyPricesByTickerAsync para o ticker: {Ticker}, tipo de ativo: {TypeAsset}", ticker, typeAsset);
+
         try
         {
             string urlParamReferrer = typeAsset == 1 ? "fiagros" : "fundos-imobiliarios";
             string urlParamRequest = typeAsset == 1 ? "fiagro" : "fii";
 
-            var request = new HttpRequestMessage(HttpMethod.Post, $"https://statusinvest.com.br/{urlParamRequest}/tickerprice");
-            AddCommonHeaders(request);
-            request.Headers.Referrer = new Uri($"https://statusinvest.com.br/{urlParamReferrer}/{ticker.ToLower()}");
+            string requestUrl = $"https://statusinvest.com.br/{urlParamRequest}/tickerprice";
+            var request = new HttpRequestMessage(HttpMethod.Post, requestUrl);
+
+            ConfigureRequestHeaders(request, $"https://statusinvest.com.br/{urlParamReferrer}/{ticker.ToLower()}");
 
             var payload = $"ticker={ticker}&type=4&currences%5B%5D=1";
             request.Content = new StringContent(payload, Encoding.UTF8, "application/x-www-form-urlencoded");
 
             _logger.LogInformation("Enviando requisição para URL: {Url} com payload: {Payload}", request.RequestUri, payload);
-            var response = await _httpClient.SendAsync(request);
-            // response.EnsureSuccessStatusCode();
+            var response = await Client.SendAsync(request);
+            response.EnsureSuccessStatusCode();
 
             var content = await response.Content.ReadAsStringAsync();
             _logger.LogInformation("Resposta recebida com sucesso para o ticker: {Ticker}", ticker);
-            _logger.LogInformation($"content: {content}");
 
             return JsonSerializer.Deserialize<IEnumerable<DailyPriceResponse>>(content, new JsonSerializerOptions
             {
@@ -79,31 +91,33 @@ public class AssetHttpService(HttpClient httpClient, ILogger<AssetHttpService> l
         catch (Exception ex)
         {
             _logger.LogError(ex, "Erro ao obter preços diários para o ticker: {Ticker}, tipo de ativo: {TypeAsset}", ticker, typeAsset);
-            throw new Exception($"Erro ao obter preços diários para o ticker: {ticker}, tipo de ativo: {typeAsset}, Error: {ex.InnerException?.Message ?? ex.Message}", ex);
+            throw;
         }
     }
 
     public async Task<IEnumerable<DailyPriceResponse>?> GetDailyDetailsAsync(string ticker, int typeAsset)
     {
         _logger.LogInformation("Iniciando método GetDailyDetailsAsync para o ticker: {Ticker}, tipo de ativo: {TypeAsset}", ticker, typeAsset);
+
         try
         {
             string urlParamReferrer = typeAsset == 1 ? "fiagros" : "fundos-imobiliarios";
             string urlParamRequest = typeAsset == 1 ? "fiagro" : "fii";
 
-            var request = new HttpRequestMessage(HttpMethod.Post, $"https://statusinvest.com.br/{urlParamRequest}/tickerprice");
-            AddCommonHeaders(request);
-            request.Headers.Referrer = new Uri($"https://statusinvest.com.br/{urlParamReferrer}/{ticker.ToLower()}");
+            string requestUrl = $"https://statusinvest.com.br/{urlParamRequest}/tickerprice";
+            var request = new HttpRequestMessage(HttpMethod.Post, requestUrl);
+
+            ConfigureRequestHeaders(request, $"https://statusinvest.com.br/{urlParamReferrer}/{ticker.ToLower()}");
 
             var payload = $"ticker={ticker}&type=-1&currences%5B%5D=1";
             request.Content = new StringContent(payload, Encoding.UTF8, "application/x-www-form-urlencoded");
 
-            _logger.LogDebug("Enviando requisição para URL: {Url} com payload: {Payload}", request.RequestUri, payload);
-            var response = await _httpClient.SendAsync(request);
+            _logger.LogInformation("Enviando requisição para URL: {Url} com payload: {Payload}", request.RequestUri, payload);
+            var response = await Client.SendAsync(request);
             response.EnsureSuccessStatusCode();
 
             var content = await response.Content.ReadAsStringAsync();
-            _logger.LogDebug("Resposta recebida com sucesso para o ticker: {Ticker}", ticker);
+            _logger.LogInformation("Resposta recebida com sucesso para o ticker: {Ticker}", ticker);
 
             return JsonSerializer.Deserialize<IEnumerable<DailyPriceResponse>>(content, new JsonSerializerOptions
             {
@@ -114,21 +128,16 @@ public class AssetHttpService(HttpClient httpClient, ILogger<AssetHttpService> l
         catch (Exception ex)
         {
             _logger.LogError(ex, "Erro ao obter detalhes diários para o ticker: {Ticker}, tipo de ativo: {TypeAsset}", ticker, typeAsset);
-            throw new Exception($"Erro ao obter detalhes diários para o ticker: {ticker}, tipo de ativo: {typeAsset}, Error: {ex.InnerException?.Message ?? ex.Message}", ex);
+            throw;
         }
     }
 
-    private static void AddCommonHeaders(HttpRequestMessage request)
+    private static void ConfigureRequestHeaders(HttpRequestMessage request, string referrer)
     {
-        request.Headers.Add("accept", "*/*");
-        request.Headers.Add("accept-language", "pt-BR,pt;q=0.9,en-US;q=0.8,en;q=0.7");
-        request.Headers.Add("sec-ch-ua", "\"Google Chrome\";v=\"131\", \"Chromium\";v=\"131\", \"Not_A Brand\";v=\"24\"");
-        request.Headers.Add("sec-ch-ua-mobile", "?0");
-        request.Headers.Add("sec-ch-ua-platform", "\"Windows\"");
-        request.Headers.Add("sec-fetch-dest", "empty");
-        request.Headers.Add("sec-fetch-mode", "cors");
-        request.Headers.Add("sec-fetch-site", "same-origin");
-        request.Headers.Add("user-agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36");
-        request.Headers.Add("x-requested-with", "XMLHttpRequest");
+        request.Headers.Add("Accept", "*/*");
+        request.Headers.Add("Accept-Language", "pt-BR,pt;q=0.9,en-US;q=0.8,en;q=0.7");
+        request.Headers.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36");
+        request.Headers.Add("X-Requested-With", "XMLHttpRequest");
+        request.Headers.Referrer = new Uri(referrer);
     }
 }
