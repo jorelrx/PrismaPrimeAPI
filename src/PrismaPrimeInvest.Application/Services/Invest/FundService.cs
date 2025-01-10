@@ -1,6 +1,7 @@
 using AutoMapper;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using PrismaPrimeInvest.Application.DTOs.InvestDTOs.Fund;
 using PrismaPrimeInvest.Application.DTOs.InvestDTOs.FundDailyPrice;
 using PrismaPrimeInvest.Application.DTOs.ResponsesDTOs;
@@ -21,9 +22,11 @@ public class FundService(
     IFundPaymentService fundPaymentService,
     IAssetReportDownloader assetReportDownloader,
     AssetHttpService assetHttpService,
+    ILogger logger,
     IMapper mapper
 ) : BaseService<Fund, FundDto, CreateFundDto, UpdateFundDto, CreateValidationFund, UpdateValidationFund, FilterFund>(repository, mapper), IFundService 
 {
+    private readonly ILogger _logger = logger;
     private readonly IFundDailyPriceService _fundDailyPriceService = fundDailyPriceService;
     private readonly IFundPaymentService _fundPaymentService = fundPaymentService;
     private readonly IAssetReportDownloader _assetReportDownloader = assetReportDownloader;
@@ -39,11 +42,14 @@ public class FundService(
 
     public override async Task<Guid> CreateAsync(CreateFundDto dto)
     {
+        _logger.LogInformation("Iniciando criação de um asset");
         await _createValidator.ValidateAndThrowAsync(dto);
         
+        _logger.LogInformation("Downloading asset report");
         string? idReport = await _assetReportDownloader.GetIdReportByCnpjAsync(dto.Cnpj) ?? 
             throw new Exception("Não foi possível encontrar o ID do relatório");
 
+        _logger.LogInformation("Downloading asset report xml");
         string? xmlData = await _assetReportDownloader.DownloadXmlAsync(idReport, dto.Cnpj) ??
             throw new Exception("Não foi possível buscar relátorio Xml");
 
@@ -65,11 +71,14 @@ public class FundService(
             MaxPrice = assetData.MonthlyReport.Summary.ShareValue
         };
 
+        _logger.LogInformation("Creating a new asset");
         await _repository.CreateAsync(fund);
 
+        _logger.LogInformation("Buscando asset criado.");
         var fundEntity = await GetByCodeAsync(dto.Ticker) ??
             throw new Exception("Erro ao buscar entidade adicionada!");
 
+        _logger.LogInformation("Sincronizando cotações diárias");
         int assetType = fund.Type == FundTypeEnum.Fiagro ? 1 : 2;
         IEnumerable<DailyPriceResponse>? dailyPrices = await _assetHttpService.GetDailyPricesByTickerAsync(dto.Ticker, assetType) ??
             throw new Exception("Falha ao buscar cotações diárias");
