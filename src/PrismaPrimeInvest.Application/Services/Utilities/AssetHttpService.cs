@@ -1,9 +1,9 @@
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using PrismaPrimeInvest.AssetJobRunner.Models;
+using PrismaPrimeInvest.Application.DTOs.ResponsesDTOs;
 
-namespace PrismaPrimeInvest.AssetJobRunner.Services;
+namespace PrismaPrimeInvest.Application.Services.Utilities;
 
 public class AssetHttpService(HttpClient httpClient)
 {

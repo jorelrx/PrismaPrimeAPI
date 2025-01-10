@@ -45,4 +45,55 @@ public class FundDailyPriceService(
         Console.WriteLine(entities.Count);
         return _mapper.Map<List<FundDailyPriceDto>>(entities);
     }
+    
+    public async Task SyncFundDailyPrices(Guid fundId, List<CreateFundDailyPriceDto> dailyPrices)
+    {
+        var filter = new FilterFundDailyPrice { FundId = fundId };
+        var existingRecords = await GetAllAsync(filter);
+
+        var createDtos = new List<CreateFundDailyPriceDto>();
+        var updateDtos = new List<UpdateFundDailyPriceDto>();
+
+        foreach (var dailyPrice in dailyPrices)
+        {
+            var existing = existingRecords.FirstOrDefault(r => r.Date == dailyPrice.Date);
+
+            if (existing != null)
+            {
+                updateDtos.Add(new UpdateFundDailyPriceDto
+                {
+                    Id = existing.Id,
+                    Name = existing.Name,
+                    Code = existing.Code,
+                    Type = existing.Type,
+                    OpenPrice = dailyPrice.OpenPrice,
+                    ClosePrice = dailyPrice.ClosePrice,
+                    MaxPrice = dailyPrice.MaxPrice,
+                    MinPrice = dailyPrice.MinPrice
+                });
+            }
+            else
+            {
+                createDtos.Add(new CreateFundDailyPriceDto
+                {
+                    Date = dailyPrice.Date,
+                    OpenPrice = dailyPrice.OpenPrice,
+                    ClosePrice = dailyPrice.ClosePrice,
+                    MaxPrice = dailyPrice.MaxPrice,
+                    MinPrice = dailyPrice.MinPrice,
+                    FundId = fundId
+                });
+            }
+        }
+
+        if (createDtos.Count > 0)
+        {
+            await CreateManyAsync(createDtos);
+        }
+
+        if (updateDtos.Count > 0)
+        {
+            await UpdateManyAsync(updateDtos);
+        }
+    }
 }

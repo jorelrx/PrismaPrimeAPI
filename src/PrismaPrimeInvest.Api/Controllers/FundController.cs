@@ -6,7 +6,6 @@ using PrismaPrimeInvest.Application.DTOs.InvestDTOs.Fund;
 using PrismaPrimeInvest.Application.Filters;
 using PrismaPrimeInvest.Application.Interfaces.Services.Invest;
 using PrismaPrimeInvest.Application.Responses;
-using PrismaPrimeInvest.Application.Services.Invest;
 
 namespace PrismaPrimeInvest.Api.Controllers;
 
@@ -58,5 +57,20 @@ public class FundController(
         };
         
         return Ok(response);
+    }
+
+    [HttpPost]
+    public override async Task<IActionResult> CreateAsync([FromBody] CreateFundDto dto)
+    {
+        var id = await _service.CreateAsync(dto);
+        
+        var response = new ApiResponse<Guid>
+        {
+            Id = id,
+            Status = HttpStatusCode.Created,
+            Response = id
+        };
+
+        return CreatedAtAction(nameof(this.GetByIdAsync), new { id }, response);
     }
 }

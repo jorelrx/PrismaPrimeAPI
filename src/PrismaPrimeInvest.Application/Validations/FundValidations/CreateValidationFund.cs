@@ -7,11 +7,11 @@ public class CreateValidationFund : BaseValidation<CreateFundDto>
 {
     public CreateValidationFund()
     {
-        RuleFor(x => x.Name)
-            .NotEmpty().WithMessage("Name is required.");
+        RuleFor(x => x.Cnpj)
+            .NotEmpty().WithMessage("Cnpj is required.");
 
-        RuleFor(x => x.Code)
-            .NotEmpty().WithMessage("Code is required.");
+        RuleFor(x => x.Ticker)
+            .NotEmpty().WithMessage("Ticker is required.");
 
         RuleFor(x => x.Type)
             .NotEmpty().WithMessage("Type is required.");

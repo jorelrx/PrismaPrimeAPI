@@ -3,4 +3,7 @@ using PrismaPrimeInvest.Application.Filters;
 
 namespace PrismaPrimeInvest.Application.Interfaces.Services.Invest;
 
-public interface IFundDailyPriceService : IBaseService<FundDailyPriceDto, CreateFundDailyPriceDto, UpdateFundDailyPriceDto, FilterFundDailyPrice> {}
+public interface IFundDailyPriceService : IBaseService<FundDailyPriceDto, CreateFundDailyPriceDto, UpdateFundDailyPriceDto, FilterFundDailyPrice> 
+{
+    Task SyncFundDailyPrices(Guid fundId, List<CreateFundDailyPriceDto> dailyPrices);
+}
