@@ -94,6 +94,7 @@ public class FundService(
 
         if (createFundDailyPriceDtos != null)
         {
+            _logger.LogInformation("Sincronizando FillMissingDays");
             var filledDailyPrices = FillMissingDays(createFundDailyPriceDtos);
 
             await _fundDailyPriceService.SyncFundDailyPrices(fund.Id, filledDailyPrices);
@@ -109,14 +110,18 @@ public class FundService(
                 MaxPrice = filledDailyPrices.Max(d => d.MaxPrice),
             };
 
+            _logger.LogInformation("Atualizando asset");
             await UpdateAsync(fund.Id, updateFundDto);
         }
 
+        _logger.LogInformation("Sincronizando pagamentos");
         EarningsResponse? earningsResponse = await _assetHttpService.GetEarningsAsync(dto.Ticker, assetType);
         if (earningsResponse != null)
         {
             await _fundPaymentService.SyncFundPayments(fund.Id, earningsResponse);
         }
+
+        _logger.LogInformation("Finalizando criação de um asset");
 
         return fundEntity.Id;
     }
