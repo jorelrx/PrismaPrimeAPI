@@ -77,10 +77,11 @@ public class AssetHttpService
 
             _logger.LogInformation("Enviando requisição para URL: {Url} com payload: {Payload}", request.RequestUri, payload);
             var response = await Client.SendAsync(request);
-            response.EnsureSuccessStatusCode();
+            // response.EnsureSuccessStatusCode();
 
             var content = await response.Content.ReadAsStringAsync();
             _logger.LogInformation("Resposta recebida com sucesso para o ticker: {Ticker}", ticker);
+            _logger.LogInformation($"content : {content}");
 
             return JsonSerializer.Deserialize<IEnumerable<DailyPriceResponse>>(content, new JsonSerializerOptions
             {
@@ -91,7 +92,7 @@ public class AssetHttpService
         catch (Exception ex)
         {
             _logger.LogError(ex, "Erro ao obter preços diários para o ticker: {Ticker}, tipo de ativo: {TypeAsset}", ticker, typeAsset);
-            throw;
+            throw new Exception($"Erro ao obter detalhes diários para o ticker: {ticker}, tipo de ativo: {typeAsset}, Error: {ex.InnerException?.Message ?? ex.Message}", ex);
         }
     }
 
