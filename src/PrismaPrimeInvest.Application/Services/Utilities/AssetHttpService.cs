@@ -64,7 +64,7 @@ public class AssetHttpService(HttpClient httpClient, ILogger<AssetHttpService> l
 
             _logger.LogInformation("Enviando requisição para URL: {Url} com payload: {Payload}", request.RequestUri, payload);
             var response = await _httpClient.SendAsync(request);
-            response.EnsureSuccessStatusCode();
+            // response.EnsureSuccessStatusCode();
 
             var content = await response.Content.ReadAsStringAsync();
             _logger.LogInformation("Resposta recebida com sucesso para o ticker: {Ticker}", ticker);
