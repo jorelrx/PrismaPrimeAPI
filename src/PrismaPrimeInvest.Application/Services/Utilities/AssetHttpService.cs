@@ -60,6 +60,44 @@ public class AssetHttpService
 
     public async Task<IEnumerable<DailyPriceResponse>?> GetDailyPricesByTickerAsync(string ticker, int typeAsset)
     {
+        _logger.LogInformation("Iniciando método GetDailyPricesByTickerAsync teste");
+        using (var client = new HttpClient())
+        {
+            // Configurando os headers para emular um navegador legítimo
+            client.DefaultRequestHeaders.Add("accept", "*/*");
+            client.DefaultRequestHeaders.Add("accept-language", "pt-BR,pt;q=0.9,en-US;q=0.8,en;q=0.7");
+            client.DefaultRequestHeaders.Add("content-type", "application/x-www-form-urlencoded; charset=UTF-8");
+            client.DefaultRequestHeaders.Add("origin", "https://statusinvest.com.br");
+            client.DefaultRequestHeaders.Add("referer", "https://statusinvest.com.br/fiagros/xpca11");
+            client.DefaultRequestHeaders.Add("sec-ch-ua", "\"Google Chrome\";v=\"131\", \"Chromium\";v=\"131\", \"Not_A Brand\";v=\"24\"");
+            client.DefaultRequestHeaders.Add("sec-ch-ua-mobile", "?0");
+            client.DefaultRequestHeaders.Add("sec-ch-ua-platform", "\"Windows\"");
+            client.DefaultRequestHeaders.Add("sec-fetch-dest", "empty");
+            client.DefaultRequestHeaders.Add("sec-fetch-mode", "cors");
+            client.DefaultRequestHeaders.Add("sec-fetch-site", "same-origin");
+            client.DefaultRequestHeaders.Add("user-agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36");
+            client.DefaultRequestHeaders.Add("x-requested-with", "XMLHttpRequest");
+            client.DefaultRequestHeaders.Add("cookie", "_adasys=28ee49d8-7e51-44b2-b582-cd481f42eb09; ..."); // Substitua pelo cookie atual
+
+            var url = "https://statusinvest.com.br/fiagro/tickerprice";
+            var data = new StringContent("ticker=XPCA11&type=4&currences[]=1", Encoding.UTF8, "application/x-www-form-urlencoded");
+
+            try
+            {
+                var response = await client.PostAsync(url, data);
+                // response.EnsureSuccessStatusCode(); // Lança uma exceção se o status não for 200-299
+
+                var responseBody = await response.Content.ReadAsStringAsync();
+                _logger.LogInformation(responseBody);
+            }
+            catch (HttpRequestException e)
+            {
+                _logger.LogInformation($"Erro na requisição: {e.Message}");
+            }
+        }
+
+
+
         _logger.LogInformation("Iniciando método GetDailyPricesByTickerAsync para o ticker: {Ticker}, tipo de ativo: {TypeAsset}", ticker, typeAsset);
 
         try
