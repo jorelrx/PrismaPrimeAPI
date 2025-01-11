@@ -84,7 +84,6 @@ public class AssetHttpService
         request.Content.Headers.ContentType = MediaTypeHeaderValue.Parse("application/x-www-form-urlencoded; charset=UTF-8");
 
         HttpResponseMessage response = await client.SendAsync(request);
-        response.EnsureSuccessStatusCode();
         string responseBody = await response.Content.ReadAsStringAsync();
         _logger.LogInformation($"responseBody: {responseBody}");
 
