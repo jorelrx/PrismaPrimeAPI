@@ -77,7 +77,12 @@ public class AssetHttpService
 
             _logger.LogInformation("Enviando requisição para URL: {Url} com payload: {Payload}", request.RequestUri, payload);
             var response = await Client.SendAsync(request);
-            // response.EnsureSuccessStatusCode();
+
+            if (!response.IsSuccessStatusCode)
+            {
+                var errorContent = await response.Content.ReadAsStringAsync();
+                throw new HttpRequestException($"Erro na requisição: {response.StatusCode}, Detalhes: {errorContent}, \n");
+            }
 
             var content = await response.Content.ReadAsStringAsync();
             _logger.LogInformation("Resposta recebida com sucesso para o ticker: {Ticker}", ticker);
@@ -139,6 +144,12 @@ public class AssetHttpService
         request.Headers.Add("Accept-Language", "pt-BR,pt;q=0.9,en-US;q=0.8,en;q=0.7");
         request.Headers.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36");
         request.Headers.Add("X-Requested-With", "XMLHttpRequest");
+        request.Headers.Add("Sec-CH-UA", "\"Google Chrome\";v=\"131\", \"Chromium\";v=\"131\", \"Not_A Brand\";v=\"24\"");
+        request.Headers.Add("Sec-CH-UA-Mobile", "?0");
+        request.Headers.Add("Sec-CH-UA-Platform", "\"Windows\"");
+        request.Headers.Add("Sec-Fetch-Dest", "empty");
+        request.Headers.Add("Sec-Fetch-Mode", "cors");
+        request.Headers.Add("Sec-Fetch-Site", "same-origin");
         request.Headers.Referrer = new Uri(referrer);
     }
 }
