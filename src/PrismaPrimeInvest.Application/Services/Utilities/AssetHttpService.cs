@@ -70,14 +70,12 @@ public class AssetHttpService
             string requestUrl = $"https://statusinvest.com.br/{urlParamRequest}/tickerprice";
 
             _logger.LogInformation("Enviando requisição GET para inicializar sessão: {Url}", requestUrl);
-            var getRequest = new HttpRequestMessage(HttpMethod.Get, requestUrl);
-            ConfigureRequestHeaders(getRequest, $"https://statusinvest.com.br/{urlParamReferrer}/{ticker.ToLower()}");
-            var getResponse = await Client.SendAsync(getRequest);
+            var initialResponse = await Client.GetAsync($"https://statusinvest.com.br/{urlParamReferrer}/{ticker.ToLower()}");
 
-            if (!getResponse.IsSuccessStatusCode)
+            if (!initialResponse.IsSuccessStatusCode)
             {
-                var errorContent = await getResponse.Content.ReadAsStringAsync();
-                throw new HttpRequestException($"Erro na requisição GET: {getResponse.StatusCode}, Detalhes: {errorContent}");
+                var errorContent = await initialResponse.Content.ReadAsStringAsync();
+                throw new HttpRequestException($"Erro na requisição GET: {initialResponse.StatusCode}, Detalhes: {errorContent}");
             }
             _logger.LogInformation("Requisição GET realizada com sucesso.");
 
