@@ -77,7 +77,6 @@ public class AssetHttpService
             client.DefaultRequestHeaders.Add("sec-fetch-site", "same-origin");
             client.DefaultRequestHeaders.Add("user-agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36");
             client.DefaultRequestHeaders.Add("x-requested-with", "XMLHttpRequest");
-            client.DefaultRequestHeaders.Add("cookie", "_adasys=28ee49d8-7e51-44b2-b582-cd481f42eb09; ..."); // Substitua pelo cookie atual
 
             var url = "https://statusinvest.com.br/fiagro/tickerprice";
             var data = new StringContent("ticker=XPCA11&type=4&currences[]=1", Encoding.UTF8, "application/x-www-form-urlencoded");
