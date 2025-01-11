@@ -68,25 +68,36 @@ public class AssetHttpService
             string urlParamRequest = typeAsset == 1 ? "fiagro" : "fii";
 
             string requestUrl = $"https://statusinvest.com.br/{urlParamRequest}/tickerprice";
-            var request = new HttpRequestMessage(HttpMethod.Post, requestUrl);
 
-            ConfigureRequestHeaders(request, $"https://statusinvest.com.br/{urlParamReferrer}/{ticker.ToLower()}");
+            _logger.LogInformation("Enviando requisição GET para inicializar sessão: {Url}", requestUrl);
+            var getRequest = new HttpRequestMessage(HttpMethod.Get, requestUrl);
+            ConfigureRequestHeaders(getRequest, $"https://statusinvest.com.br/{urlParamReferrer}/{ticker.ToLower()}");
+            var getResponse = await Client.SendAsync(getRequest);
+
+            if (!getResponse.IsSuccessStatusCode)
+            {
+                var errorContent = await getResponse.Content.ReadAsStringAsync();
+                throw new HttpRequestException($"Erro na requisição GET: {getResponse.StatusCode}, Detalhes: {errorContent}");
+            }
+            _logger.LogInformation("Requisição GET realizada com sucesso.");
+
+            var postRequest = new HttpRequestMessage(HttpMethod.Post, requestUrl);
+            ConfigureRequestHeaders(postRequest, $"https://statusinvest.com.br/{urlParamReferrer}/{ticker.ToLower()}");
 
             var payload = $"ticker={ticker}&type=4&currences%5B%5D=1";
-            request.Content = new StringContent(payload, Encoding.UTF8, "application/x-www-form-urlencoded");
+            postRequest.Content = new StringContent(payload, Encoding.UTF8, "application/x-www-form-urlencoded");
 
-            _logger.LogInformation("Enviando requisição para URL: {Url} com payload: {Payload}", request.RequestUri, payload);
-            var response = await Client.SendAsync(request);
+            _logger.LogInformation("Enviando requisição POST para URL: {Url} com payload: {Payload}", postRequest.RequestUri, payload);
+            var postResponse = await Client.SendAsync(postRequest);
 
-            if (!response.IsSuccessStatusCode)
+            if (!postResponse.IsSuccessStatusCode)
             {
-                var errorContent = await response.Content.ReadAsStringAsync();
-                throw new HttpRequestException($"Erro na requisição: {response.StatusCode}, Detalhes: {errorContent}, \n");
+                var errorContent = await postResponse.Content.ReadAsStringAsync();
+                throw new HttpRequestException($"Erro na requisição POST: {postResponse.StatusCode}, Detalhes: {errorContent}");
             }
 
-            var content = await response.Content.ReadAsStringAsync();
+            var content = await postResponse.Content.ReadAsStringAsync();
             _logger.LogInformation("Resposta recebida com sucesso para o ticker: {Ticker}", ticker);
-            _logger.LogInformation($"content : {content}");
 
             return JsonSerializer.Deserialize<IEnumerable<DailyPriceResponse>>(content, new JsonSerializerOptions
             {
