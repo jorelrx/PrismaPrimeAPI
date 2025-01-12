@@ -9,6 +9,9 @@ using PrismaPrimeInvest.Application.Services.UserServices;
 using PrismaPrimeInvest.Application.Interfaces.Services.Utilities;
 using PrismaPrimeInvest.Application.Services.Utilities;
 
+using PrismaPrimeInvest.Application.Interfaces.Services.Relationships;
+using PrismaPrimeInvest.Application.Services.Relationships;
+
 namespace PrismaPrimeInvest.Infra.IoC.DependencyInjection;
 
 public static class ServiceExtensions
@@ -24,5 +27,6 @@ public static class ServiceExtensions
         services.AddScoped<IFundPaymentService, FundPaymentService>();
         services.AddScoped<IAssetReportDownloader, AssetReportDownloader>();
         services.AddScoped<IUserService, UserService>();
+        services.AddScoped<IFundFavoriteService, FundFavoriteService>();
     }
 }

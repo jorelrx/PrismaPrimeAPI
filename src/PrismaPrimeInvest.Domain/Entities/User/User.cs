@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Identity;
+using PrismaPrimeInvest.Domain.Entities.Relationships;
 using PrismaPrimeInvest.Domain.Interfaces.Entities;
 
 namespace PrismaPrimeInvest.Domain.Entities.User
@@ -13,5 +14,6 @@ namespace PrismaPrimeInvest.Domain.Entities.User
         public required string Document { get; set; }
 
         public required Wallet Wallet { get; set; }
+        public ICollection<FundFavorite> FavoriteFunds { get; set; } = [];
     }
 }

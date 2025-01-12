@@ -1,6 +1,5 @@
 using System.Net;
 using AutoMapper;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PrismaPrimeInvest.Application.DTOs.WalletDTOs;
 using PrismaPrimeInvest.Application.Filters;
@@ -16,7 +15,7 @@ public class WalletController(
     IMapper mapper
 ) : ControllerBase<WalletDto, CreateWalletDto, UpdateWalletDto, FilterWallet>(walletService, mapper) 
 {
-    private readonly IWalletService _service = walletService;
+    private new readonly IWalletService _service = walletService;
 
     [HttpGet("user/{userId}")]
     public async Task<IActionResult> GetWalletByUserId(Guid userId)

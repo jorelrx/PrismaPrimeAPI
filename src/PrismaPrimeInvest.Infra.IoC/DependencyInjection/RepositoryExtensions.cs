@@ -20,5 +20,6 @@ public static class RepositoryExtensions
         services.AddScoped<IFundDailyPriceRepository, FundDailyPriceRepository>();
         services.AddScoped<IFundPaymentRepository, FundPaymentRepository>();
         services.AddScoped<IWalletFundRepository, WalletFundRepository>();
+        services.AddScoped<IFundFavoriteRepository, FundFavoriteRepository>();
     }
 }
