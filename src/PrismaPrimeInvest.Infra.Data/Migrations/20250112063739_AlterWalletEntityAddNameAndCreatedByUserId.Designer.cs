@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PrismaPrimeInvest.Infra.Data.Contexts;
 
@@ -11,9 +12,11 @@ using PrismaPrimeInvest.Infra.Data.Contexts;
 namespace PrismaPrimeInvest.Infra.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250112063739_AlterWalletEntityAddNameAndCreatedByUserId")]
+    partial class AlterWalletEntityAddNameAndCreatedByUserId
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -502,9 +505,10 @@ namespace PrismaPrimeInvest.Infra.Data.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETUTCDATE()");
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("CreatedById")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("CreatedByUserId")
                         .HasColumnType("uniqueidentifier");
@@ -517,15 +521,13 @@ namespace PrismaPrimeInvest.Infra.Data.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("UpdatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETUTCDATE()");
+                        .HasColumnType("datetime2");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CreatedByUserId");
+                    b.HasIndex("CreatedById");
 
-                    b.ToTable("Wallet", (string)null);
+                    b.ToTable("Wallet");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>
@@ -660,13 +662,11 @@ namespace PrismaPrimeInvest.Infra.Data.Migrations
 
             modelBuilder.Entity("PrismaPrimeInvest.Domain.Entities.User.Wallet", b =>
                 {
-                    b.HasOne("PrismaPrimeInvest.Domain.Entities.User.User", "CreatedByUser")
+                    b.HasOne("PrismaPrimeInvest.Domain.Entities.User.User", "CreatedBy")
                         .WithMany()
-                        .HasForeignKey("CreatedByUserId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .HasForeignKey("CreatedById");
 
-                    b.Navigation("CreatedByUser");
+                    b.Navigation("CreatedBy");
                 });
 
             modelBuilder.Entity("PrismaPrimeInvest.Domain.Entities.Invest.Fund", b =>

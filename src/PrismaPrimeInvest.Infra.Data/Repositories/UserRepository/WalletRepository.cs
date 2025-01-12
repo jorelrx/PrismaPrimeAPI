@@ -12,7 +12,7 @@ public class WalletRepository(ApplicationDbContext context) : BaseRepository<Wal
     {
         try
         {
-            Wallet? wallet = await _entity.Where(w => w.UserId == userId).FirstOrDefaultAsync();
+            Wallet? wallet = await _entity.FirstOrDefaultAsync();
             return wallet;
         }
         catch (Exception ex)

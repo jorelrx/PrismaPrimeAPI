@@ -9,9 +9,9 @@ public class WalletFund : BaseEntity
     public double PurchasePrice { get; set; }
     public int Quantity { get; set; }
 
-    public Guid FundId { get; set; }
-    public Guid WalletId { get; set; }
+    public required Guid FundId { get; set; }
+    public required Guid WalletId { get; set; }
 
-    public required Wallet Wallet { get; set; }
-    public required Fund Fund { get; set; }
+    public Wallet? Wallet { get; set; }
+    public Fund? Fund { get; set; }
 }

@@ -9,6 +9,8 @@ using PrismaPrimeInvest.Application.DTOs.InvestDTOs.FundDailyPrice;
 using PrismaPrimeInvest.Application.DTOs.InvestDTOs.FundPayment;
 using PrismaPrimeInvest.Application.DTOs.WalletDTOs;
 using Microsoft.AspNetCore.Identity;
+using PrismaPrimeInvest.Domain.Entities.Relationships;
+using PrismaPrimeInvest.Application.DTOs.WalletUserDTOs;
 
 namespace PrismaPrimeInvest.Application.Configurations;
 public static class AutoMapperConfiguration
@@ -37,6 +39,10 @@ public static class AutoMapperConfiguration
             config.CreateMap<FundPayment, FundPaymentDto>().ReverseMap();
             config.CreateMap<FundPayment, CreateFundPaymentDto>().ReverseMap();
             config.CreateMap<FundPayment, UpdateFundPaymentDto>().ReverseMap();
+
+            config.CreateMap<WalletUser, WalletUserDto>().ReverseMap();
+            config.CreateMap<WalletUser, CreateWalletUserDto>().ReverseMap();
+            config.CreateMap<WalletUser, UpdateWalletUserDto>().ReverseMap();
             
             config.CreateMap<Fund, FundDto>()
                 .ForMember(dest => dest.Type, opt => opt.MapFrom(src => src.Type.ToString()))

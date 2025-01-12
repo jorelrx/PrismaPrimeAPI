@@ -31,4 +31,9 @@ public class UserService(
         
         return entity.Id;
     }
+
+    public async Task<User?> GetEntityByIdAsync(Guid id)
+    {
+        return await _repository.GetByIdAsync(id);
+    }
 }

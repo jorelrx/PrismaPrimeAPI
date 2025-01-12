@@ -11,6 +11,7 @@ using PrismaPrimeInvest.Application.Services.Utilities;
 
 using PrismaPrimeInvest.Application.Interfaces.Services.Relationships;
 using PrismaPrimeInvest.Application.Services.Relationships;
+using Microsoft.AspNetCore.Http;
 
 namespace PrismaPrimeInvest.Infra.IoC.DependencyInjection;
 
@@ -28,5 +29,8 @@ public static class ServiceExtensions
         services.AddScoped<IAssetReportDownloader, AssetReportDownloader>();
         services.AddScoped<IUserService, UserService>();
         services.AddScoped<IFundFavoriteService, FundFavoriteService>();
+        services.AddScoped<IWalletUserService, WalletUserService>();
+        services.AddScoped<IAuthService, AuthService>();
+        services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
     }
 }

@@ -11,11 +11,29 @@ namespace PrismaPrimeInvest.Api.Controllers;
 [Route("api/[controller]")]
 [ApiController]
 public class WalletController(
-    IWalletService walletService, 
+    IWalletService walletService,
+    IAuthService authService,
     IMapper mapper
 ) : ControllerBase<WalletDto, CreateWalletDto, UpdateWalletDto, FilterWallet>(walletService, mapper) 
 {
     private new readonly IWalletService _service = walletService;
+    private readonly IAuthService _authService = authService;
+
+    [HttpPost]
+    public override async Task<IActionResult> CreateAsync([FromBody] CreateWalletDto dto)
+    {
+        Guid userId = _authService.GetAuthenticatedUserId();
+        Guid id = await _service.CreateAsync(dto, userId);
+        ApiResponse<Guid> response = new()
+        {
+            Id = Guid.NewGuid(),
+            Status = HttpStatusCode.Created,
+            Response = id,
+            Message = "Wallet created successfully."
+        };
+        
+        return CreatedAtAction(nameof(this.GetByIdAsync), new { id }, response);
+    }
 
     [HttpGet("user/{userId}")]
     public async Task<IActionResult> GetWalletByUserId(Guid userId)
@@ -34,8 +52,7 @@ public class WalletController(
     [HttpPost("fund/purchase")]
     public async Task<IActionResult> PurchaseFund([FromBody] FundPurchaseDto purchaseDto)
     {
-        // O UserId poderia vir do token JWT ou ser passado na requisição
-        Guid userId = new("3fa85f64-5717-4562-b3fc-2c963f66afa6");
+        Guid userId = _authService.GetAuthenticatedUserId();
 
         try
         {

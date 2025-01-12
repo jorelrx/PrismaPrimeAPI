@@ -5,6 +5,7 @@ namespace PrismaPrimeInvest.Application.Interfaces.Services.UserInterfaces;
 
 public interface IWalletService : IBaseService<WalletDto, CreateWalletDto, UpdateWalletDto, FilterWallet> 
 {
+    Task<Guid> CreateAsync(CreateWalletDto dto, Guid userId);
     Task<WalletDto?> GetWalletByUserId(Guid userId);
     Task PurchaseFundAsync(Guid userId, FundPurchaseDto purchaseDto);
 }

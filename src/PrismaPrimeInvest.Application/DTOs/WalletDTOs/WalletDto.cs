@@ -2,9 +2,10 @@ namespace PrismaPrimeInvest.Application.DTOs.WalletDTOs;
 
 public class WalletDto : BaseDto
 {
-    public string? FirstName { get; set; }
-    public string? LastName { get; set; }
-    public string? Document { get; set; }
+
+    public required string Name { get; set; }
+    public required Guid CreatedByUserId { get; set; }
+    public bool IsPublic { get; set; } = false;
     public required DateTime CreatedAt { get; set; }
     public required DateTime UpdatedAt { get; set; }
 }
