@@ -21,8 +21,16 @@ public class UserService(
     public override async Task<Guid> CreateAsync(CreateUserDto dto)
     {
         await _createValidator.ValidateAndThrowAsync(dto);
-        User entity = _mapper.Map<User>(dto);
-        IdentityResult result = await _userManager.CreateAsync(entity, dto.Password);
+        User entity = new() {
+            Document = "123456789",
+            Email = dto.Email,
+            FirstName = dto.FirstName,
+            LastName = dto.LastName,
+            PasswordHash = dto.Password,
+            UserName = dto.FirstName + dto.LastName
+        };
+
+        IdentityResult result = await _userManager.CreateAsync(entity, entity.PasswordHash);
         
         if (!result.Succeeded)
         {
