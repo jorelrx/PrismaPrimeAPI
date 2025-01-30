@@ -32,8 +32,6 @@ public class FundDailyPriceService(
         if (filter.FundId != null)
             query = query.Where(x => x.FundId == filter.FundId);
 
-        query = query.OrderBy(x => x.Date);
-
         return query;
     }
 

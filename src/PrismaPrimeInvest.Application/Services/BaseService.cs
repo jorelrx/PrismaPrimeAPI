@@ -38,8 +38,7 @@ namespace PrismaPrimeInvest.Application.Services
 
             if (!string.IsNullOrEmpty(filter.OrderBy))
             {
-                bool order = filter.OrderDirection != false;
-                query = query.OrderByDynamic(filter.OrderBy, order);
+                query = query.OrderByDynamic(filter.OrderBy, filter.SortDirection ?? "asc");
             }
 
             return query;
