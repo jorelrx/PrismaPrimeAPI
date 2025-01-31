@@ -34,6 +34,19 @@ public class FundPaymentService(
             query = query.Where(x => x.FundId == filter.FundId);
 
         query = query.OrderBy(x => x.PaymentDate);
+        
+        if (filter.Period.HasValue)
+        {
+            DateTime startDate = filter.Period switch
+            {
+                0 => DateTime.UtcNow.AddMonths(-13),
+                1 => DateTime.UtcNow.AddMonths(-25),
+                2 => DateTime.UtcNow.AddMonths(-61),
+                _ => DateTime.MinValue
+            };
+
+            query = query.Where(x => x.PaymentDate >= startDate && x.PaymentDate <= DateTime.UtcNow);
+        }
 
         return query;
     }

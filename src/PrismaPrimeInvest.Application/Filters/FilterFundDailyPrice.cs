@@ -4,4 +4,5 @@ public class FilterFundDailyPrice : FilterBase
 {
     public DateTime? Date { get; set; }
     public Guid? FundId { get; set; }
+    public int? Period { get; set; }
 }

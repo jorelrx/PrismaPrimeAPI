@@ -32,6 +32,22 @@ public class FundDailyPriceService(
         if (filter.FundId != null)
             query = query.Where(x => x.FundId == filter.FundId);
 
+        if (filter.Period.HasValue)
+        {
+            DateTime startDate = filter.Period switch
+            {
+                0 => DateTime.UtcNow.AddDays(-7),
+                1 => DateTime.UtcNow.AddDays(-30),
+                2 => DateTime.UtcNow.AddMonths(-6),
+                3 => DateTime.UtcNow.AddYears(-1),
+                4 => DateTime.UtcNow.AddYears(-5),
+                5 => DateTime.UtcNow.AddYears(-10),
+                _ => DateTime.MinValue
+            };
+
+            query = query.Where(x => x.Date >= startDate && x.Date <= DateTime.UtcNow);
+        }
+
         return query;
     }
 
