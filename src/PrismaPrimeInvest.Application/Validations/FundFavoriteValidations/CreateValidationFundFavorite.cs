@@ -7,7 +7,7 @@ public class CreateValidationFundFavorite : BaseValidation<CreateFundFavoriteDto
 {
     public CreateValidationFundFavorite()
     {
-        RuleFor(x => x.FundId)
-            .NotEmpty().WithMessage("FundId is required.");
+        RuleFor(x => x.Code)
+            .NotEmpty().WithMessage("Code is required.");
     }
 }
