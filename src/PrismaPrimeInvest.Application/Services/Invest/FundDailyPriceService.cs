@@ -56,7 +56,7 @@ public class FundDailyPriceService(
         var query = _repository.GetAllAsync();
         query = ApplyFilters(query, filter);
         List<FundDailyPrice>? entities = await query.Include(p => p.Fund).Where(p => p.Fund.Id == p.FundId).ToListAsync();
-        Console.WriteLine(entities.Count);
+        
         return _mapper.Map<List<FundDailyPriceDto>>(entities);
     }
     

@@ -25,7 +25,17 @@ public static class AutoMapperConfiguration
                 .ForMember(dest => dest.PasswordHash, opt => opt.MapFrom(src => HashPassword(src.Password)));
             config.CreateMap<User, UpdateUserDto>().ReverseMap();
 
-            config.CreateMap<Wallet, WalletDto>().ReverseMap();
+            
+            config.CreateMap<Wallet, WalletDto>()
+                .ForMember(dest => dest.CreatedByUserName, opt => 
+                    opt.MapFrom(src => src.CreatedByUser != null 
+                        ? $"{src.CreatedByUser.FirstName} {src.CreatedByUser.LastName}" 
+                        : "Desconhecido"))
+                .ForMember(dest => dest.TotalInvested, opt => 
+                    opt.MapFrom(src => src.WalletFunds.Sum(wf => wf.PurchasePrice * wf.Quantity)))
+                .ForMember(dest => dest.TotalCurrentValue, opt => 
+                    opt.MapFrom(src => src.WalletFunds.Sum(wf => wf.Fund != null ? wf.Fund.Price * wf.Quantity : 0)));
+
             config.CreateMap<Wallet, CreateWalletDto>().ReverseMap();
             config.CreateMap<Wallet, UpdateWalletDto>().ReverseMap();
 

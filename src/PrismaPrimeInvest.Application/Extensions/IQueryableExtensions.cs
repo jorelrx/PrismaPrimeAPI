@@ -26,7 +26,7 @@ public static class IQueryableExtensions
         var lambda = Expression.Lambda(property, parameter);
 
         string methodName = sortDirection.Equals("asc", StringComparison.CurrentCultureIgnoreCase) ? "OrderBy" : "OrderByDescending";
-        Console.WriteLine("Ordenando por: " + methodName);
+        
         var queryExpression = Expression.Call(
             typeof(Queryable),
             methodName,

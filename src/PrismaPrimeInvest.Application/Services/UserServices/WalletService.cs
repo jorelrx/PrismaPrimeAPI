@@ -1,5 +1,6 @@
 using AutoMapper;
 using FluentValidation;
+using Microsoft.EntityFrameworkCore;
 using PrismaPrimeInvest.Application.DTOs.WalletDTOs;
 using PrismaPrimeInvest.Application.DTOs.WalletUserDTOs;
 using PrismaPrimeInvest.Application.Filters;
@@ -20,7 +21,8 @@ public class WalletService(
     IFundService fundService,
     IUserService userService,
     IWalletUserService walletUserService,
-    IWalletFundRepository _walletFundRepository
+    IWalletFundRepository _walletFundRepository,
+    IFundPaymentService fundPaymentService
 ) : BaseService<
     Wallet, 
     WalletDto, 
@@ -33,9 +35,34 @@ public class WalletService(
 {
     private readonly IWalletRepository _walletRepository = repository;
     private readonly IFundService _fundService = fundService;
+    private readonly IFundPaymentService _fundPaymentService = fundPaymentService;
     private readonly IUserService _userService = userService;
     private readonly IWalletUserService _walletUserService = walletUserService;
 
+    public override async Task<List<WalletDto>> GetAllAsync(FilterWallet filter)
+    {
+        IQueryable<Wallet> query = _repository.GetAllAsync()
+            .Include(w => w.CreatedByUser)
+            .Include(w => w.WalletFunds)
+                .ThenInclude(wf => wf.Fund);
+
+        query = ApplyFilters(query, filter);
+
+        var wallets = await query.ToListAsync();
+        return _mapper.Map<List<WalletDto>>(wallets);
+    }
+
+    public override async Task<WalletDto> GetByIdAsync(Guid id)
+    {
+        Wallet? wallet = await _repository.GetAllAsync()
+            .Include(w => w.CreatedByUser)
+            .Include(w => w.WalletFunds)
+                .ThenInclude(wf => wf.Fund)
+            .FirstOrDefaultAsync(w => w.Id == id);
+
+        return _mapper.Map<WalletDto>(wallet);
+    }
+    
     public async Task<Guid> CreateAsync(CreateWalletDto dto, Guid userId)
     {
         await _createValidator.ValidateAndThrowAsync(dto);
@@ -47,7 +74,7 @@ public class WalletService(
             CreatedByUserId = user.Id,
             CreatedByUser = user,
             IsPublic = dto.IsPublic ?? false,
-            Name = dto.Name
+            Name = dto.Name ?? "Wallet"
         };
 
         await _repository.CreateAsync(entity);
@@ -69,14 +96,15 @@ public class WalletService(
         return _mapper.Map<WalletDto>(wallet);
     }
 
+    private async Task<Wallet?> GetEntityByIdAsync(Guid id) => await _walletRepository.GetByIdAsync(id);
+
     public async Task PurchaseFundAsync(Guid userId, FundPurchaseDto purchaseDto)
     {
         User user = await _userService.GetEntityByIdAsync(userId) ?? throw new Exception("User not found.");
 
-        WalletDto wallet = await GetByIdAsync(purchaseDto.WalletId) ?? throw new Exception("Wallet not found for user.");
+        Wallet wallet = await GetEntityByIdAsync(purchaseDto.WalletId) ?? throw new Exception("Wallet not found for user.");
 
-        if (user.Id != wallet.CreatedByUserId) 
-            throw new Exception("User is not the owner of the wallet.");
+        if (user.Id != wallet.CreatedByUserId) throw new Exception("User is not the owner of the wallet.");
 
         if (await _fundService.GetByIdAsync(purchaseDto.FundId) == null) throw new Exception("Fund not found.");
 

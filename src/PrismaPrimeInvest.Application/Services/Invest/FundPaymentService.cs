@@ -34,6 +34,10 @@ public class FundPaymentService(
             query = query.Where(x => x.FundId == filter.FundId);
 
         query = query.OrderBy(x => x.PaymentDate);
+
+        if (filter.Date != null)
+            query = query.Where(x => x.PaymentDate.Year == filter.Date.Value.Year && 
+                                     x.PaymentDate.Month == filter.Date.Value.Month);
         
         if (filter.Period.HasValue)
         {

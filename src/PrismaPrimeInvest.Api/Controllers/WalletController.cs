@@ -1,5 +1,6 @@
 using System.Net;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PrismaPrimeInvest.Application.DTOs.WalletDTOs;
 using PrismaPrimeInvest.Application.Filters;
@@ -10,6 +11,7 @@ namespace PrismaPrimeInvest.Api.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
+[AllowAnonymous]
 public class WalletController(
     IWalletService walletService,
     IAuthService authService,
@@ -18,6 +20,10 @@ public class WalletController(
 {
     private new readonly IWalletService _service = walletService;
     private readonly IAuthService _authService = authService;
+
+    [HttpGet]
+    public override async Task<IActionResult> GetAllAsync([FromQuery] FilterWallet filter) =>
+        await base.GetAllAsync(filter);
 
     [HttpPost]
     public override async Task<IActionResult> CreateAsync([FromBody] CreateWalletDto dto)
@@ -54,14 +60,15 @@ public class WalletController(
     {
         Guid userId = _authService.GetAuthenticatedUserId();
 
-        try
+        await _service.PurchaseFundAsync(userId, purchaseDto);
+
+        var response = new ApiResponse<string>
         {
-            await _service.PurchaseFundAsync(userId, purchaseDto);
-            return Ok(new { message = "Fund purchased successfully." });
-        }
-        catch (Exception ex)
-        {
-            return BadRequest(new { error = ex.Message });
-        }
+            Id = new Guid(),
+            Status = HttpStatusCode.OK,
+            Response = "Fund purchased successfully"
+        };
+
+        return Ok(response);
     }
 }
