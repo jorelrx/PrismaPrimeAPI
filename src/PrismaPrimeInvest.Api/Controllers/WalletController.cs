@@ -71,4 +71,19 @@ public class WalletController(
 
         return Ok(response);
     }
+
+    [HttpGet("{walletId}/investment-analysis")]
+    public async Task<ActionResult<List<WalletInvestmentAnalysisDto>>> GetWalletInvestmentAnalysis(Guid walletId)
+    {
+        var analysis = await _service.GetInvestmentAnalysisAsync(walletId);
+        
+        var response = new ApiResponse<List<WalletInvestmentAnalysisDto>>
+        {
+            Id = new Guid(),
+            Status = HttpStatusCode.OK,
+            Response = analysis
+        };
+
+        return Ok(response);
+    }
 }

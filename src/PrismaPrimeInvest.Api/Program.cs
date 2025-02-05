@@ -18,6 +18,7 @@ builder.Services.ConfigureJwtAuthentication(builder.Configuration);
 builder.Services.AddAuthorization();
 builder.Services.AddInfrastructure();
 builder.Services.ConfigureAutoMapper();
+builder.Services.ConfigureHolidaysFile();
 
 // Configuração de CORS para permitir qualquer origem
 builder.Services.AddCors(options =>

@@ -8,4 +8,5 @@ public interface IWalletService : IBaseService<WalletDto, CreateWalletDto, Updat
     Task<Guid> CreateAsync(CreateWalletDto dto, Guid userId);
     Task<WalletDto?> GetWalletByUserId(Guid userId);
     Task PurchaseFundAsync(Guid userId, FundPurchaseDto purchaseDto);
+    Task<List<WalletInvestmentAnalysisDto>> GetInvestmentAnalysisAsync(Guid walletId);
 }

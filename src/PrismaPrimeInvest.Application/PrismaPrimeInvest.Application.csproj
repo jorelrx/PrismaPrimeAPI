@@ -21,4 +21,10 @@
     <ProjectReference Include="..\PrismaPrimeInvest.Infra.Data\PrismaPrimeInvest.Infra.Data.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="Resources/holidays.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

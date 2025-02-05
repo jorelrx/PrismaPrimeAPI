@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
 using PrismaPrimeInvest.Application.Responses;
 using Newtonsoft.Json.Serialization;
+using PrismaPrimeInvest.Application.Extensions;
 
 namespace PrismaPrimeInvest.Application.Configurations;
 public static class ApplicationConfiguration
@@ -115,5 +116,11 @@ public static class ApplicationConfiguration
                 }
             };
         });
+    }
+
+    public static void ConfigureHolidaysFile(this IServiceCollection services)
+    {
+        var holidayFilePath = Path.Combine(AppContext.BaseDirectory, "Resources", "holidays.json");
+        DateTimeExtensions.LoadHolidaysFromJson(holidayFilePath);
     }
 }
