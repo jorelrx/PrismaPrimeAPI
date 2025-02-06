@@ -191,6 +191,7 @@ public class WalletService(
                     DateTime dateTimeNow = DateTime.UtcNow;
                     FilterFundDailyPrice filterFundDailyPrice = new()
                     {
+                        FundId = fund.Id,
                         Date = currentDate.Month == dateTimeNow.Month && currentDate.Year == dateTimeNow.Year
                             ? dateTimeNow.GetLastBusinessDay()
                             : currentDate.GetLastBusinessDayOfMonth()
