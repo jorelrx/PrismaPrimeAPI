@@ -154,6 +154,8 @@ public class WalletService(
                 InvestedInMonth = 0,
                 TotalCurrentValue = 0,
                 TotalGrossInvested = 0,
+                TotalCurrentValueWithDividends = 0,
+                TotalGrossInvestedWithDividends = 0,
                 TotalDividends = 0,
                 MonthlyEarnings = 0
             };
@@ -212,6 +214,8 @@ public class WalletService(
 
             totalDividends += newWalletInvestmentAnalysisDto.MonthlyEarnings;
             newWalletInvestmentAnalysisDto.TotalDividends = totalDividends;
+            newWalletInvestmentAnalysisDto.TotalGrossInvestedWithDividends = totalInvested + totalDividends;
+            newWalletInvestmentAnalysisDto.TotalCurrentValueWithDividends = newWalletInvestmentAnalysisDto.TotalCurrentValue + totalDividends;
 
             analysisList.Add(newWalletInvestmentAnalysisDto);
 

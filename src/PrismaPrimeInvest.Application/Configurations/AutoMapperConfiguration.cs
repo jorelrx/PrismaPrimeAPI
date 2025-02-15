@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Identity;
 using PrismaPrimeInvest.Domain.Entities.Relationships;
 using PrismaPrimeInvest.Application.DTOs.WalletUserDTOs;
 using PrismaPrimeInvest.Application.DTOs.FundFavoriteDTOs;
+using PrismaPrimeInvest.Application.DTOs.WalletFundDTOs;
 
 namespace PrismaPrimeInvest.Application.Configurations;
 public static class AutoMapperConfiguration
@@ -58,6 +59,10 @@ public static class AutoMapperConfiguration
             config.CreateMap<WalletUser, WalletUserDto>().ReverseMap();
             config.CreateMap<WalletUser, CreateWalletUserDto>().ReverseMap();
             config.CreateMap<WalletUser, UpdateWalletUserDto>().ReverseMap();
+
+            config.CreateMap<WalletFund, WalletFundDto>().ReverseMap();
+            config.CreateMap<WalletFund, CreateWalletFundDto>().ReverseMap();
+            config.CreateMap<WalletFund, UpdateWalletFundDto>().ReverseMap();
             
             config.CreateMap<Fund, FundDto>()
                 .ForMember(dest => dest.Type, opt => opt.MapFrom(src => src.Type.ToString()))
