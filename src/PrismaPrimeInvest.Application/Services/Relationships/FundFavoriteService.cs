@@ -34,7 +34,9 @@ public class FundFavoriteService(
     {
         await _createValidator.ValidateAndThrowAsync(dto);
 
-        Guid userId = _authService.GetAuthenticatedUserId();
+        Guid userId = _authService.GetAuthenticatedUserId() ?? 
+            throw new UnauthorizedAccessException("User is not authenticated.");
+
         var fundDto = await _fundService.GetByCodeAsync(dto.Code) ?? throw new Exception("Fund not found");
         
         FundFavorite entity = new()
@@ -50,7 +52,9 @@ public class FundFavoriteService(
 
     public override async Task<List<FundFavoriteDto>> GetAllAsync(FilterFundFavorite filter)
     {
-        Guid userId = _authService.GetAuthenticatedUserId();
+        Guid userId = _authService.GetAuthenticatedUserId() ?? 
+            throw new UnauthorizedAccessException("User is not authenticated.");
+
         IQueryable<FundFavorite> query = _repository.GetAllAsync()
                                                     .Where(f => f.UserId == userId)
                                                     .Include(f => f.Fund);

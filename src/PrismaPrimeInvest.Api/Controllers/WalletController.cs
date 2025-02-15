@@ -28,8 +28,11 @@ public class WalletController(
     [HttpPost]
     public override async Task<IActionResult> CreateAsync([FromBody] CreateWalletDto dto)
     {
-        Guid userId = _authService.GetAuthenticatedUserId();
+        Guid userId = _authService.GetAuthenticatedUserId() ?? 
+            throw new UnauthorizedAccessException("User is not authenticated.");
+
         Guid id = await _service.CreateAsync(dto, userId);
+        
         ApiResponse<Guid> response = new()
         {
             Id = Guid.NewGuid(),
@@ -58,7 +61,8 @@ public class WalletController(
     [HttpPost("fund/purchase")]
     public async Task<IActionResult> PurchaseFund([FromBody] FundPurchaseDto purchaseDto)
     {
-        Guid userId = _authService.GetAuthenticatedUserId();
+        Guid userId = _authService.GetAuthenticatedUserId() ?? 
+            throw new UnauthorizedAccessException("User is not authenticated.");
 
         await _service.PurchaseFundAsync(userId, purchaseDto);
 

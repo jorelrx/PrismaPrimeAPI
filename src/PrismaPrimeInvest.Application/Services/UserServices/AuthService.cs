@@ -13,11 +13,10 @@ public class AuthService : IAuthService
         _httpContextAccessor = httpContextAccessor;
     }
 
-    public Guid GetAuthenticatedUserId()
+    public Guid? GetAuthenticatedUserId()
     {
-        var userIdClaim = (_httpContextAccessor.HttpContext?.User.FindFirst(ClaimTypes.NameIdentifier)) ?? 
-            throw new UnauthorizedAccessException("User is not authenticated.");
+        var userIdClaim = _httpContextAccessor.HttpContext?.User.FindFirst(ClaimTypes.NameIdentifier);
         
-        return Guid.Parse(userIdClaim.Value);
+        return userIdClaim != null ? Guid.Parse(userIdClaim.Value) : null;
     }
 }
