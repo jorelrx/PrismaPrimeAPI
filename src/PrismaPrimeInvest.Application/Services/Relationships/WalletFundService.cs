@@ -1,4 +1,5 @@
 using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using PrismaPrimeInvest.Application.DTOs.WalletFundDTOs;
 using PrismaPrimeInvest.Application.Filters;
 using PrismaPrimeInvest.Application.Interfaces.Services.Relationships;
@@ -19,4 +20,13 @@ public class WalletFundService(
     CreateWalletFundValidation, 
     UpdateWalletFundValidation, 
     FilterWalletFund
->(repository, mapper), IWalletFundService {}
+>(repository, mapper), IWalletFundService 
+{
+    public override async Task<List<WalletFundDto>> GetAllAsync(FilterWalletFund filter)
+    {
+        IQueryable<WalletFund>? query = _repository.GetAllAsync().Include(w => w.Fund);
+        query = ApplyFilters(query, filter);
+        var entities = await query.ToListAsync();
+        return _mapper.Map<List<WalletFundDto>>(entities);
+    }
+}

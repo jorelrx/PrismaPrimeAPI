@@ -60,7 +60,14 @@ public static class AutoMapperConfiguration
             config.CreateMap<WalletUser, CreateWalletUserDto>().ReverseMap();
             config.CreateMap<WalletUser, UpdateWalletUserDto>().ReverseMap();
 
-            config.CreateMap<WalletFund, WalletFundDto>().ReverseMap();
+            config.CreateMap<WalletFund, WalletFundDto>()
+                .ForMember(dest => dest.FundName, opt =>
+                    opt.MapFrom(src => src.Fund != null
+                        ? src.Fund.Code
+                        : ""))
+                .ForMember(dest => dest.TotalAmount, opt =>
+                    opt.MapFrom(src => src.PurchasePrice * src.Quantity));
+
             config.CreateMap<WalletFund, CreateWalletFundDto>().ReverseMap();
             config.CreateMap<WalletFund, UpdateWalletFundDto>().ReverseMap();
             
