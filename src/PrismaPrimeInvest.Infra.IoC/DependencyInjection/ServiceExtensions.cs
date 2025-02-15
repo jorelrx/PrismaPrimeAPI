@@ -11,6 +11,7 @@ using PrismaPrimeInvest.Application.Services.Utilities;
 
 using PrismaPrimeInvest.Application.Interfaces.Services.Relationships;
 using PrismaPrimeInvest.Application.Services.Relationships;
+
 using Microsoft.AspNetCore.Http;
 
 namespace PrismaPrimeInvest.Infra.IoC.DependencyInjection;
@@ -22,6 +23,7 @@ public static class ServiceExtensions
         services.AddScoped<HttpClient>();
         services.AddScoped<AssetHttpService>();
 
+        services.AddScoped<IWalletFundService, WalletFundService>();
         services.AddScoped<IFundService, FundService>();
         services.AddScoped<IWalletService, WalletService>();
         services.AddScoped<IFundDailyPriceService, FundDailyPriceService>();
