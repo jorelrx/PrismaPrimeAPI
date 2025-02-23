@@ -21,6 +21,6 @@ public class Fund : BaseEntity
 
     public ICollection<FundDailyPrice>? DailyPrices { get; set;}
     public ICollection<FundPayment>? Payments { get; set; }
-
+    public ICollection<FundReport>? Reports { get; set; }
     public ICollection<WalletFund> WalletFunds { get; set; } = [];
 }

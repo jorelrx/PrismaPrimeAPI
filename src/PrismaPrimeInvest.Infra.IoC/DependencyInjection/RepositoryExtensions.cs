@@ -23,5 +23,6 @@ public static class RepositoryExtensions
         services.AddScoped<IWalletFundRepository, WalletFundRepository>();
         services.AddScoped<IWalletUserRepository, WalletUserRepository>();
         services.AddScoped<IFundFavoriteRepository, FundFavoriteRepository>();
+        services.AddScoped<IFundReportRepository, FundReportRepository>();
     }
 }

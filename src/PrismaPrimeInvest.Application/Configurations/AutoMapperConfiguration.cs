@@ -1,18 +1,21 @@
 using AutoMapper;
-using PrismaPrimeInvest.Application.DTOs.UserDTOs;
-using PrismaPrimeInvest.Domain.Entities.User;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
-using PrismaPrimeInvest.Domain.Entities.Invest;
+
 using PrismaPrimeInvest.Domain.Enums;
+using PrismaPrimeInvest.Domain.Entities.User;
+using PrismaPrimeInvest.Domain.Entities.Invest;
+using PrismaPrimeInvest.Domain.Entities.Relationships;
+
+using PrismaPrimeInvest.Application.DTOs.UserDTOs;
 using PrismaPrimeInvest.Application.DTOs.InvestDTOs.Fund;
 using PrismaPrimeInvest.Application.DTOs.InvestDTOs.FundDailyPrice;
 using PrismaPrimeInvest.Application.DTOs.InvestDTOs.FundPayment;
 using PrismaPrimeInvest.Application.DTOs.WalletDTOs;
-using Microsoft.AspNetCore.Identity;
-using PrismaPrimeInvest.Domain.Entities.Relationships;
 using PrismaPrimeInvest.Application.DTOs.WalletUserDTOs;
 using PrismaPrimeInvest.Application.DTOs.FundFavoriteDTOs;
 using PrismaPrimeInvest.Application.DTOs.WalletFundDTOs;
+using PrismaPrimeInvest.Application.DTOs.InvestDTOs.FundReport;
 
 namespace PrismaPrimeInvest.Application.Configurations;
 public static class AutoMapperConfiguration
@@ -55,6 +58,10 @@ public static class AutoMapperConfiguration
             config.CreateMap<FundFavorite, FundFavoriteDto>().ReverseMap();
             config.CreateMap<FundFavorite, CreateFundFavoriteDto>().ReverseMap();
             config.CreateMap<FundFavorite, UpdateFundFavoriteDto>().ReverseMap();
+
+            config.CreateMap<FundReport, FundReportDto>().ReverseMap();
+            config.CreateMap<FundReport, CreateFundReportDto>().ReverseMap();
+            config.CreateMap<FundReport, UpdateFundReportDto>().ReverseMap();
 
             config.CreateMap<WalletUser, WalletUserDto>().ReverseMap();
             config.CreateMap<WalletUser, CreateWalletUserDto>().ReverseMap();

@@ -7,6 +7,7 @@ using PrismaPrimeInvest.AssetJobRunner.Services;
 using System.Text.Json;
 using PrismaPrimeInvest.AssetJobRunner.Models;
 using PrismaPrimeInvest.Application.DTOs.InvestDTOs.FundDailyPrice;
+using PrismaPrimeInvest.Application.DTOs.InvestDTOs.Fund;
 
 namespace PrismaPrimeInvest.AssetJobRunner.Functions
 {
@@ -18,7 +19,7 @@ namespace PrismaPrimeInvest.AssetJobRunner.Functions
         private readonly IFundDailyPriceService _fundDailyPriceService = fundDailyPriceService;
 
         [Function("DataFetch")]
-        public async Task Run([TimerTrigger("0 0 * * * *")] TimerInfo myTimer)
+        public async Task Run([TimerTrigger("0 */10 10-17 * * 1-5")] TimerInfo myTimer)
         {
             _logger.LogInformation($"DataFetch function executed at: {DateTime.Now}");
 
@@ -44,7 +45,7 @@ namespace PrismaPrimeInvest.AssetJobRunner.Functions
                             CreateFundDailyPriceDto createFundDailyPriceDto = new()
                             {
                                 FundId = asset.Id,
-                                OpenPrice = result.CurrentPrice,
+                                OpenPrice = result.FirstPrice,
                                 ClosePrice = result.CurrentPrice,
                                 MaxPrice = result.MaxPrice,
                                 MinPrice = result.MinPrice,
@@ -80,6 +81,22 @@ namespace PrismaPrimeInvest.AssetJobRunner.Functions
                                     MinPrice = createFundDailyPriceDto.MinPrice
                                 });
                             }
+
+                            // Atualizar os dados de asset para salvar os dados no banco de dados. Atualizar, Price, MaxPrice, MinPrice.
+                            _logger.LogInformation($"Atualizando dados do fundo {asset.Code}.");
+                            
+                            UpdateFundDto updateFundDto = new()
+                            {
+                                Id = asset.Id,
+                                Code = asset.Code,
+                                Name = asset.Name,
+                                Type = asset.Type,
+                                Price = createFundDailyPriceDto.ClosePrice,
+                                MaxPrice = createFundDailyPriceDto.MaxPrice,
+                                MinPrice = createFundDailyPriceDto.MinPrice
+                            };
+
+                            await _fundService.UpdateAsync(asset.Id, updateFundDto);
                         }
                         else
                         {

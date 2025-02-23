@@ -31,6 +31,7 @@ public static class ServiceExtensions
         services.AddScoped<IAssetReportDownloader, AssetReportDownloader>();
         services.AddScoped<IUserService, UserService>();
         services.AddScoped<IFundFavoriteService, FundFavoriteService>();
+        services.AddScoped<IFundReportService, FundReportService>();
         services.AddScoped<IWalletUserService, WalletUserService>();
         services.AddScoped<IAuthService, AuthService>();
         services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();

@@ -2,7 +2,7 @@ using System.Text.Json.Serialization;
 
 namespace PrismaPrimeInvest.Application.DTOs.ResponsesDTOs;
 
-class ApiAssetReportResponse
+public class ApiAssetReportResponse
 {
     [JsonPropertyName("data")]
     public List<ReportResponse>? Data { get; set; }

@@ -53,6 +53,37 @@ public class AssetReportDownloader : IAssetReportDownloader
         }
     }
 
+    public async Task<List<ReportResponse>?> GetReportsByCnpjAsync(string cnpj)
+    {
+        string urlListaRelatorios = $"{BaseUrl}/fnet/publico/abrirGerenciadorDocumentosCVM?cnpjFundo={cnpj}";
+        string urlPesquisarDados = $"{BaseUrl}/fnet/publico/pesquisarGerenciadorDocumentosDados?d=1&s=0&l=100&o%5B0%5D%5BdataEntrega%5D=desc&idCategoriaDocumento=0&idTipoDocumento=0&idEspecieDocumento=0&isSession=true&_={DateTimeOffset.Now.ToUnixTimeMilliseconds()}";
+
+        try
+        {
+            var initialResponse = await Client.GetAsync(urlListaRelatorios);
+            initialResponse.EnsureSuccessStatusCode();
+
+            var request = new HttpRequestMessage(HttpMethod.Get, urlPesquisarDados)
+            {
+                Headers = { Referrer = new Uri(urlListaRelatorios) }
+            };
+
+            var response = await Client.SendAsync(request);
+            response.EnsureSuccessStatusCode();
+
+            string responseBody = await response.Content.ReadAsStringAsync();
+
+            var apiResponse = JsonSerializer.Deserialize<ApiAssetReportResponse>(responseBody);
+            
+            return apiResponse?.Data;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error fetching report ID: {ex.Message}");
+            return null;
+        }
+    }
+
     public async Task<string?> DownloadXmlAsync(string idReport, string cnpj)
     {
         string url = $"{BaseUrl}/fnet/publico/downloadDocumento?id={idReport}";

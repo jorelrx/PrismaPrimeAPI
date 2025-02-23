@@ -21,7 +21,7 @@ namespace PrismaPrimeInvest.AssetJobRunner.Functions
         }
 
         [Function("AnalyzeHistoricalBestBuy")]
-        public async Task Run([TimerTrigger("0 * * * * *")] TimerInfo myTimer)
+        public async Task Run([TimerTrigger("0 */5 10-17 * * 1-5")] TimerInfo myTimer)
         {
             _logger.LogInformation($"AnalyzeHistoricalBestBuy function executed at: {DateTime.Now}");
 
