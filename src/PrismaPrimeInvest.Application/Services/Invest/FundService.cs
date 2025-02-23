@@ -20,6 +20,7 @@ public class FundService(
     IFundRepository repository,
     IFundDailyPriceService fundDailyPriceService,
     IFundPaymentService fundPaymentService,
+    IFundReportService fundReportService,
     IAssetReportDownloader assetReportDownloader,
     AssetHttpService assetHttpService,
     ILogger<FundService> logger,
@@ -29,6 +30,7 @@ public class FundService(
     private readonly ILogger<FundService> _logger = logger;
     private readonly IFundDailyPriceService _fundDailyPriceService = fundDailyPriceService;
     private readonly IFundPaymentService _fundPaymentService = fundPaymentService;
+    private readonly IFundReportService _fundReportService = fundReportService;
     private readonly IAssetReportDownloader _assetReportDownloader = assetReportDownloader;
     private readonly AssetHttpService _assetHttpService = assetHttpService;
 
@@ -120,6 +122,9 @@ public class FundService(
         {
             await _fundPaymentService.SyncFundPayments(fund.Id, earningsResponse);
         }
+
+        _logger.LogInformation("Sincronizando FundReport");
+        await _fundReportService.SyncByFundIdAsync(fund.Id);
 
         _logger.LogInformation("Finalizando criação de um asset");
 
