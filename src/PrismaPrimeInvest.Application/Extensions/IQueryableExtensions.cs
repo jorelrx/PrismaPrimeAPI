@@ -1,4 +1,5 @@
 using System.Linq.Expressions;
+using System.Reflection;
 
 namespace PrismaPrimeInvest.Application.Extensions;
 
@@ -35,5 +36,35 @@ public static class IQueryableExtensions
             Expression.Quote(lambda));
 
         return query.Provider.CreateQuery<T>(queryExpression);
+    }
+
+    public static IQueryable<T> ApplyTextSearch<T>(this IQueryable<T> query, string searchTerm, string[] searchFields)
+    {
+        if (string.IsNullOrEmpty(searchTerm) || searchFields == null || searchFields.Length == 0)
+            return query;
+
+        var parameter = Expression.Parameter(typeof(T), "x");
+        Expression? predicate = null;
+
+        foreach (var field in searchFields)
+        {
+            var property = typeof(T).GetProperty(field, BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance);
+            if (property == null) continue;
+
+            var propertyExpression = Expression.Property(parameter, property);
+            var searchExpression = Expression.Call(
+                propertyExpression,
+                "Contains",
+                Type.EmptyTypes,
+                Expression.Constant(searchTerm, typeof(string))
+            );
+
+            predicate = predicate == null ? searchExpression : Expression.OrElse(predicate, searchExpression);
+        }
+
+        if (predicate == null) return query;
+
+        var lambda = Expression.Lambda<Func<T, bool>>(predicate, parameter);
+        return query.Where(lambda);
     }
 }

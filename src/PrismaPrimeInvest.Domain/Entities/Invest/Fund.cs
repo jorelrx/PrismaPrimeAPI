@@ -10,8 +10,9 @@ public class Fund : BaseEntity
     public required string Code { get; set; }
     public required int QtyQuotasIssued { get; set; }
     public required double NetAssetValue { get; set; }
-    public required double TotalShares { get; set; }
+    public required int TotalShareholders { get; set; }
     public required double NetAssetValuePerShare { get; set; }
+    public required double DividendYield { get; set; }
     public required double Price { get; set; }
     public required double MaxPrice { get; set; }
     public required double MinPrice { get; set; }

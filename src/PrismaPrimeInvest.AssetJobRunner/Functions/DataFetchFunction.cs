@@ -8,15 +8,17 @@ using System.Text.Json;
 using PrismaPrimeInvest.AssetJobRunner.Models;
 using PrismaPrimeInvest.Application.DTOs.InvestDTOs.FundDailyPrice;
 using PrismaPrimeInvest.Application.DTOs.InvestDTOs.Fund;
+using PrismaPrimeInvest.Application.Responses;
 
 namespace PrismaPrimeInvest.AssetJobRunner.Functions
 {
-    public class DataFetchFunction(StatusInvestService statusInvestService, ILoggerFactory loggerFactory, IFundService fundService, IFundDailyPriceService fundDailyPriceService)
+    public class DataFetchFunction(StatusInvestService statusInvestService, ILoggerFactory loggerFactory, IFundService fundService, IFundDailyPriceService fundDailyPriceService, IFundPaymentService fundPaymentService)
     {
         private readonly ILogger _logger = loggerFactory.CreateLogger<DataFetchFunction>();
         private readonly StatusInvestService _statusInvestService = statusInvestService;
         private readonly IFundService _fundService = fundService;
         private readonly IFundDailyPriceService _fundDailyPriceService = fundDailyPriceService;
+        private readonly IFundPaymentService _fundPaymentService = fundPaymentService;
 
         [Function("DataFetch")]
         public async Task Run([TimerTrigger("0 */10 10-17 * * 1-5")] TimerInfo myTimer)
@@ -25,7 +27,7 @@ namespace PrismaPrimeInvest.AssetJobRunner.Functions
 
             var assets = await _fundService.GetAllAsync(new FilterFund());
 
-            foreach (var asset in assets)
+            foreach (var asset in assets.Items)
             {
                 try
                 {
@@ -52,15 +54,15 @@ namespace PrismaPrimeInvest.AssetJobRunner.Functions
                                 Date = result.CurrentDate
                             };
 
-                            List<FundDailyPriceDto>? fundDailyPrices = await _fundDailyPriceService.GetAllAsync(new FilterFundDailyPrice() 
+                            PagedResult<FundDailyPriceDto>? fundDailyPrices = await _fundDailyPriceService.GetAllAsync(new FilterFundDailyPrice() 
                             {
                                 Date = createFundDailyPriceDto.Date,
                                 FundId = createFundDailyPriceDto.FundId
                             });
 
-                            _logger.LogInformation($"Quantidade de fundos com a data: {createFundDailyPriceDto.Date.Date} e o FundId: {createFundDailyPriceDto.FundId} => {fundDailyPrices.Count}");
+                            _logger.LogInformation($"Quantidade de fundos com a data: {createFundDailyPriceDto.Date.Date} e o FundId: {createFundDailyPriceDto.FundId} => {fundDailyPrices.Items.Count}");
 
-                            FundDailyPriceDto? fundDailyPrice = fundDailyPrices.FirstOrDefault();
+                            FundDailyPriceDto? fundDailyPrice = fundDailyPrices.Items.FirstOrDefault();
 
                             if (fundDailyPrice == null)
                             {
@@ -82,8 +84,11 @@ namespace PrismaPrimeInvest.AssetJobRunner.Functions
                                 });
                             }
 
-                            // Atualizar os dados de asset para salvar os dados no banco de dados. Atualizar, Price, MaxPrice, MinPrice.
                             _logger.LogInformation($"Atualizando dados do fundo {asset.Code}.");
+
+                            var fundPayments = await _fundPaymentService.GetAllAsync(new() { FundId = asset.Id, Period = 0 });
+                            var dividendSum = fundPayments.Items.Sum(x => x.Dividend);
+                            var dividendYield = dividendSum / createFundDailyPriceDto.ClosePrice;
                             
                             UpdateFundDto updateFundDto = new()
                             {
@@ -92,8 +97,9 @@ namespace PrismaPrimeInvest.AssetJobRunner.Functions
                                 Name = asset.Name,
                                 Type = asset.Type,
                                 Price = createFundDailyPriceDto.ClosePrice,
-                                MaxPrice = createFundDailyPriceDto.MaxPrice,
-                                MinPrice = createFundDailyPriceDto.MinPrice
+                                MaxPrice = Math.Max(createFundDailyPriceDto.MaxPrice, asset.MaxPrice),
+                                MinPrice = Math.Min(createFundDailyPriceDto.MinPrice, asset.MinPrice),
+                                DividendYield = dividendYield
                             };
 
                             await _fundService.UpdateAsync(asset.Id, updateFundDto);
@@ -125,15 +131,15 @@ namespace PrismaPrimeInvest.AssetJobRunner.Functions
                                 Date = result.CurrentDate
                             };
 
-                            List<FundDailyPriceDto>? fundDailyPrices = await _fundDailyPriceService.GetAllAsync(new FilterFundDailyPrice() 
+                            PagedResult<FundDailyPriceDto>? fundDailyPrices = await _fundDailyPriceService.GetAllAsync(new FilterFundDailyPrice() 
                             {
                                 Date = createFundDailyPriceDto.Date,
                                 FundId = createFundDailyPriceDto.FundId
                             });
 
-                            _logger.LogInformation($"Quantidade de fundos com a data: {createFundDailyPriceDto.Date.Date} e o FundId: {createFundDailyPriceDto.FundId} => {fundDailyPrices.Count}");
+                            _logger.LogInformation($"Quantidade de fundos com a data: {createFundDailyPriceDto.Date.Date} e o FundId: {createFundDailyPriceDto.FundId} => {fundDailyPrices.Items.Count}");
 
-                            FundDailyPriceDto? fundDailyPrice = fundDailyPrices.FirstOrDefault();
+                            FundDailyPriceDto? fundDailyPrice = fundDailyPrices.Items.FirstOrDefault();
 
                             if (fundDailyPrice == null)
                             {
@@ -155,6 +161,26 @@ namespace PrismaPrimeInvest.AssetJobRunner.Functions
                                     MinPrice = createFundDailyPriceDto.MinPrice
                                 });
                             }
+                            
+                            _logger.LogInformation($"Atualizando dados do fundo {asset.Code}.");
+
+                            var fundPayments = await _fundPaymentService.GetAllAsync(new() { FundId = asset.Id, Period = 0 });
+                            var dividendSum = fundPayments.Items.Sum(x => x.Dividend);
+                            var dividendYield = dividendSum / createFundDailyPriceDto.ClosePrice;
+                            
+                            UpdateFundDto updateFundDto = new()
+                            {
+                                Id = asset.Id,
+                                Code = asset.Code,
+                                Name = asset.Name,
+                                Type = asset.Type,
+                                Price = createFundDailyPriceDto.ClosePrice,
+                                MaxPrice = Math.Max(createFundDailyPriceDto.MaxPrice, asset.MaxPrice),
+                                MinPrice = Math.Min(createFundDailyPriceDto.MinPrice, asset.MinPrice),
+                                DividendYield = dividendYield
+                            };
+
+                            await _fundService.UpdateAsync(asset.Id, updateFundDto);
                         }
                         else
                         {

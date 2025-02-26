@@ -9,6 +9,7 @@ public class UpdateFundDto
     public required double Price { get; set; }
     public required double MaxPrice { get; set; }
     public required double MinPrice { get; set; }
+    public required double DividendYield { get; set; }
     public int BestBuyDay { get; set; }
     public double BestBuyDayPrice { get; set; }
 }

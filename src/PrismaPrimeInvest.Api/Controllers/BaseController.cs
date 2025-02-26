@@ -51,7 +51,7 @@ public abstract class ControllerBase<TDto, TCreateDto, TUpdateDto, TFilter>(IBas
     [HttpGet]
     public virtual async Task<IActionResult> GetAllAsync([FromQuery] TFilter filter)
     {
-        var response = new ApiResponse<List<TDto>>
+        var response = new ApiResponse<PagedResult<TDto>>
         {
             Id = Guid.NewGuid(),
             Status = HttpStatusCode.OK,

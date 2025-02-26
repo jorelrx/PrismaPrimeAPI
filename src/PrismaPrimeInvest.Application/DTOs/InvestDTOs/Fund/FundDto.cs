@@ -8,11 +8,13 @@ public class FundDto : BaseDto
     public required string Code { get; set; }
     public required int QtyQuotasIssued { get; set; }
     public required double NetAssetValue { get; set; }
-    public required double TotalShares { get; set; }
+    public required int TotalShareholders { get; set; }
     public required double NetAssetValuePerShare { get; set; }
+    public required double DividendYield { get; set; }
     public required double Price { get; set; }
     public required double MaxPrice { get; set; }
     public required double MinPrice { get; set; }
+    public required double Pvp { get; set; }
     public int BestBuyDay { get; set; }
     public double BestBuyDayPrice { get; set; }
     public required string Type { get; set; }

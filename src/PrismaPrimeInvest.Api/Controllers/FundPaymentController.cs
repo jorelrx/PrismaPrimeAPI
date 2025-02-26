@@ -2,7 +2,6 @@ using System.Net;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using PrismaPrimeInvest.Application.DTOs.InvestDTOs;
 using PrismaPrimeInvest.Application.DTOs.InvestDTOs.FundPayment;
 using PrismaPrimeInvest.Application.Filters;
 using PrismaPrimeInvest.Application.Interfaces.Services.Invest;
@@ -20,7 +19,7 @@ public class FundPaymentController(
     [AllowAnonymous]
     public override async Task<IActionResult> GetAllAsync([FromQuery] FilterFundPayment filter)
     {
-        var response = new ApiResponse<List<FundPaymentDto>>
+        var response = new ApiResponse<PagedResult<FundPaymentDto>>
         {
             Id = Guid.NewGuid(),
             Status = HttpStatusCode.OK,

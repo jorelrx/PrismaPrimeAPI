@@ -13,6 +13,7 @@ public class WalletConfiguration : BaseConfiguration<Wallet>
         builder.Property(e => e.Name).IsRequired();
         builder.Property(e => e.CreatedByUserId).IsRequired();
         builder.Property(e => e.IsPublic).IsRequired();
+        builder.Property(e => e.WalletType).IsRequired();
         
         builder.HasOne(e => e.CreatedByUser)
             .WithMany()

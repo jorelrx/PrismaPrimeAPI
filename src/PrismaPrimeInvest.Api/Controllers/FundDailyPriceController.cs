@@ -19,7 +19,7 @@ public class FundDailyPriceController(
     [AllowAnonymous]
     public override async Task<IActionResult> GetAllAsync([FromQuery] FilterFundDailyPrice filter)
     {
-        var response = new ApiResponse<List<FundDailyPriceDto>>
+        var response = new ApiResponse<PagedResult<FundDailyPriceDto>>
         {
             Id = Guid.NewGuid(),
             Status = HttpStatusCode.OK,

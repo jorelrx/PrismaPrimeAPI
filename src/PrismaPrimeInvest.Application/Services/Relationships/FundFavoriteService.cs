@@ -6,6 +6,7 @@ using PrismaPrimeInvest.Application.Filters;
 using PrismaPrimeInvest.Application.Interfaces.Services.Invest;
 using PrismaPrimeInvest.Application.Interfaces.Services.Relationships;
 using PrismaPrimeInvest.Application.Interfaces.Services.UserInterfaces;
+using PrismaPrimeInvest.Application.Responses;
 using PrismaPrimeInvest.Application.Validations.FundFavoriteValidations;
 using PrismaPrimeInvest.Domain.Entities.Relationships;
 using PrismaPrimeInvest.Domain.Interfaces.Repositories.Relationships;
@@ -50,7 +51,7 @@ public class FundFavoriteService(
         return entity.Id;
     }
 
-    public override async Task<List<FundFavoriteDto>> GetAllAsync(FilterFundFavorite filter)
+    public override async Task<PagedResult<FundFavoriteDto>> GetAllAsync(FilterFundFavorite filter)
     {
         Guid userId = _authService.GetAuthenticatedUserId() ?? 
             throw new UnauthorizedAccessException("User is not authenticated.");
@@ -60,8 +61,12 @@ public class FundFavoriteService(
                                                     .Include(f => f.Fund);
 
         query = ApplyFilters(query, filter);
-        var entities = await query.ToListAsync();
+        var totalItems = await query.CountAsync();
+        var items = await query
+            .Skip((filter.Page - 1) * (filter.PageSize ?? totalItems))
+            .Take(filter.PageSize ?? totalItems)
+            .ToListAsync();
 
-        return _mapper.Map<List<FundFavoriteDto>>(entities);
+        return new PagedResult<FundFavoriteDto>(_mapper.Map<List<FundFavoriteDto>>(items), totalItems, filter.Page, filter.PageSize ?? totalItems);
     }
 }

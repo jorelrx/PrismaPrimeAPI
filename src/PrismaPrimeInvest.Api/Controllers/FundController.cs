@@ -36,7 +36,7 @@ public class FundController(
     [HttpGet]
     public override async Task<IActionResult> GetAllAsync([FromQuery] FilterFund filter)
     {
-        var response = new ApiResponse<List<FundDto>>
+        var response = new ApiResponse<PagedResult<FundDto>>
         {
             Id = Guid.NewGuid(),
             Status = HttpStatusCode.OK,

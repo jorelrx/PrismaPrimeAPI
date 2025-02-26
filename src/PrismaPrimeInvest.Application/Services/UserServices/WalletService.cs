@@ -10,10 +10,12 @@ using PrismaPrimeInvest.Application.Filters;
 using PrismaPrimeInvest.Application.Interfaces.Services.Invest;
 using PrismaPrimeInvest.Application.Interfaces.Services.Relationships;
 using PrismaPrimeInvest.Application.Interfaces.Services.UserInterfaces;
+using PrismaPrimeInvest.Application.Responses;
 using PrismaPrimeInvest.Application.Validations.WalletValidations;
 using PrismaPrimeInvest.Domain.Entities.Invest;
 using PrismaPrimeInvest.Domain.Entities.Relationships;
 using PrismaPrimeInvest.Domain.Entities.User;
+using PrismaPrimeInvest.Domain.Enums;
 using PrismaPrimeInvest.Domain.Interfaces.Repositories.Relationships;
 using PrismaPrimeInvest.Domain.Interfaces.Repositories.UserInterface;
 
@@ -45,7 +47,7 @@ public class WalletService(
     private readonly IWalletUserService _walletUserService = walletUserService;
     private readonly IAuthService _authService = authService;
 
-    public override async Task<List<WalletDto>> GetAllAsync(FilterWallet filter)
+    public override async Task<PagedResult<WalletDto>> GetAllAsync(FilterWallet filter)
     {
         Guid? userId = _authService.GetAuthenticatedUserId();
         IQueryable<Wallet> query = _repository.GetAllAsync()
@@ -56,8 +58,13 @@ public class WalletService(
 
         query = ApplyFilters(query, filter);
 
-        var wallets = await query.ToListAsync();
-        return _mapper.Map<List<WalletDto>>(wallets);
+        var totalItems = await query.CountAsync();
+        var items = await query
+            .Skip((filter.Page - 1) * (filter.PageSize ?? totalItems))
+            .Take(filter.PageSize ?? totalItems)
+            .ToListAsync();
+
+        return new PagedResult<WalletDto>(_mapper.Map<List<WalletDto>>(items), totalItems, filter.Page, filter.PageSize ?? totalItems);
     }
 
     public override async Task<WalletDto> GetByIdAsync(Guid id)
@@ -81,6 +88,7 @@ public class WalletService(
         {
             CreatedByUserId = user.Id,
             CreatedByUser = user,
+            WalletType = dto.WalletType ?? WalletTypeEnum.Undefined,
             IsPublic = dto.IsPublic ?? false,
             Name = dto.Name ?? "Wallet"
         };
@@ -204,9 +212,9 @@ public class WalletService(
                             : currentDate.GetLastBusinessDayOfMonth()
                     };
                     
-                    List<FundDailyPriceDto> fundDailyPrices = await _fundDailyPriceService.GetAllAsync(filterFundDailyPrice);
+                    PagedResult<FundDailyPriceDto> fundDailyPrices = await _fundDailyPriceService.GetAllAsync(filterFundDailyPrice);
 
-                    FundDailyPriceDto? dailyPriceAtual = fundDailyPrices.FirstOrDefault();
+                    FundDailyPriceDto? dailyPriceAtual = fundDailyPrices.Items.FirstOrDefault();
                     if (dailyPriceAtual != null)
                     {
                         foreach (var transaction in transactions.Where(t => t.PurchaseDate <= filterFundDailyPrice.Date && t.FundId == fund.Id))

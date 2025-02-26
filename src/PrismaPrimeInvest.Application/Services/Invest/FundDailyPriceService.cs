@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using PrismaPrimeInvest.Application.DTOs.InvestDTOs.FundDailyPrice;
 using PrismaPrimeInvest.Application.Filters;
 using PrismaPrimeInvest.Application.Interfaces.Services.Invest;
+using PrismaPrimeInvest.Application.Responses;
 using PrismaPrimeInvest.Application.Validations.FundDailyPriceValidations;
 using PrismaPrimeInvest.Domain.Entities.Invest;
 using PrismaPrimeInvest.Domain.Interfaces.Repositories.Invest;
@@ -51,13 +52,19 @@ public class FundDailyPriceService(
         return query;
     }
 
-    public override async Task<List<FundDailyPriceDto>> GetAllAsync(FilterFundDailyPrice filter)
+    public override async Task<PagedResult<FundDailyPriceDto>> GetAllAsync(FilterFundDailyPrice filter)
     {
         var query = _repository.GetAllAsync();
         query = ApplyFilters(query, filter);
-        List<FundDailyPrice>? entities = await query.Include(p => p.Fund).Where(p => p.Fund.Id == p.FundId).ToListAsync();
+        query = query.Include(p => p.Fund).Where(p => p.Fund.Id == p.FundId);
         
-        return _mapper.Map<List<FundDailyPriceDto>>(entities);
+        var totalItems = await query.CountAsync();
+        var items = await query
+            .Skip((filter.Page - 1) * (filter.PageSize ?? totalItems))
+            .Take(filter.PageSize ?? totalItems)
+            .ToListAsync();
+
+        return new PagedResult<FundDailyPriceDto>(_mapper.Map<List<FundDailyPriceDto>>(items), totalItems, filter.Page, filter.PageSize ?? totalItems);
     }
     
     public async Task SyncFundDailyPrices(Guid fundId, List<CreateFundDailyPriceDto> dailyPrices)
@@ -70,7 +77,7 @@ public class FundDailyPriceService(
 
         foreach (var dailyPrice in dailyPrices)
         {
-            var existing = existingRecords.FirstOrDefault(r => r.Date == dailyPrice.Date);
+            var existing = existingRecords.Items.FirstOrDefault(r => r.Date == dailyPrice.Date);
 
             if (existing != null)
             {

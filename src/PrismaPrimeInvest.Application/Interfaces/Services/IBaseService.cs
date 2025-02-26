@@ -1,6 +1,6 @@
 using PrismaPrimeInvest.Application.DTOs;
 using PrismaPrimeInvest.Application.Filters;
-using PrismaPrimeInvest.Domain.Entities;
+using PrismaPrimeInvest.Application.Responses;
 
 namespace PrismaPrimeInvest.Application.Interfaces.Services;
 
@@ -11,7 +11,7 @@ public interface IBaseService<TDto, TCreateDto, TUpdateDto, TFilter>
     where TFilter : FilterBase
 {
     Task<TDto> GetByIdAsync(Guid id);
-    Task<List<TDto>> GetAllAsync(TFilter filter);
+    Task<PagedResult<TDto>> GetAllAsync(TFilter filter);
     Task<Guid> CreateAsync(TCreateDto dto);
     Task<List<Guid>> CreateManyAsync(IEnumerable<TCreateDto> dtos);
     Task UpdateAsync(Guid id, TUpdateDto dto);

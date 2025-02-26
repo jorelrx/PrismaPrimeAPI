@@ -36,8 +36,28 @@ public class FundService(
 
     protected override IQueryable<Fund> ApplyFilters(IQueryable<Fund> query, FilterFund filter)
     {
+        query = base.ApplyFilters(query, filter);
+        
         if (!string.IsNullOrEmpty(filter.Code))
             query = query.Where(f => f.Code == filter.Code);
+
+        if (filter.MaxDividendYield != null)
+            query = query.Where(f => f.DividendYield <= filter.MaxDividendYield);
+
+        if (filter.MinDividendYield != null)
+            query = query.Where(f => f.DividendYield >= filter.MinDividendYield);
+            
+        if (filter.MaxNetAssetValue != null)
+            query = query.Where(f => f.NetAssetValue <= filter.MaxDividendYield);
+
+        if (filter.MinNetAssetValue != null)
+            query = query.Where(f => f.NetAssetValue >= filter.MinDividendYield);
+
+        if (filter.MaxPvp != null)
+            query = query.Where(f => (f.Price / f.NetAssetValuePerShare) <= filter.MaxPvp);
+
+        if (filter.MinPvp != null)
+            query = query.Where(f => (f.Price / f.NetAssetValuePerShare) >= filter.MinPvp);
 
         return query;
     }
@@ -60,17 +80,18 @@ public class FundService(
 
         Fund fund = new()
         {
+            Name = assetData.GeneralData.FundName,
             Cnpj = dto.Cnpj,
             Code = dto.Ticker,
-            Name = assetData.GeneralData.FundName,
-            Type = Enum.Parse<FundTypeEnum>(dto.Type),
             QtyQuotasIssued = assetData.GeneralData.IssuedSharesQuantity,
             NetAssetValue = assetData.MonthlyReport.Summary.NetWorth,
-            TotalShares = assetData.MonthlyReport.Shareholders.Total,
+            TotalShareholders = assetData.MonthlyReport.Shareholders.Total,
             NetAssetValuePerShare = assetData.MonthlyReport.Summary.ShareValue,
+            DividendYield = 0,
             Price = assetData.MonthlyReport.Summary.ShareValue,
             MinPrice = assetData.MonthlyReport.Summary.ShareValue,
-            MaxPrice = assetData.MonthlyReport.Summary.ShareValue
+            MaxPrice = assetData.MonthlyReport.Summary.ShareValue,
+            Type = Enum.Parse<FundTypeEnum>(dto.Type)
         };
 
         _logger.LogInformation("Creating a new asset");
@@ -110,6 +131,7 @@ public class FundService(
                 Price = filledDailyPrices.Last().ClosePrice,
                 MinPrice = filledDailyPrices.Min(d => d.MinPrice),
                 MaxPrice = filledDailyPrices.Max(d => d.MaxPrice),
+                DividendYield = fund.DividendYield,
             };
 
             _logger.LogInformation("Atualizando asset");
@@ -159,7 +181,7 @@ public class FundService(
             FundId = fund.Id
         });
 
-        var monthlyPrices = dailyPrices
+        var monthlyPrices = dailyPrices.Items
             .GroupBy(p => new { p.Date.Year, p.Date.Month })
             .ToDictionary(
                 g => g.Key,
@@ -194,7 +216,7 @@ public class FundService(
                 totalShares += sharesToBuy;
                 totalInvestmentWithoutDividends += BaseAmount;
 
-                var monthlyDividend = payments
+                var monthlyDividend = payments.Items
                     .Where(p => p.PaymentDate.Year == year && p.PaymentDate.Month == month)
                     .Sum(p => p.Dividend * totalShares);
 

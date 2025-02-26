@@ -5,6 +5,7 @@ using PrismaPrimeInvest.Application.Extensions;
 using PrismaPrimeInvest.Application.Filters;
 using PrismaPrimeInvest.Application.Interfaces.Services.Invest;
 using PrismaPrimeInvest.Application.Interfaces.Services.Utilities;
+using PrismaPrimeInvest.Application.Responses;
 using PrismaPrimeInvest.Application.Validations.FundReportValidations;
 using PrismaPrimeInvest.Domain.Entities.Invest;
 using PrismaPrimeInvest.Domain.Interfaces.Repositories.Invest;
@@ -41,15 +42,19 @@ public class FundReportService(
         return query;
     }
 
-    public override async Task<List<FundReportDto>> GetAllAsync(FilterFundReport filter)
+    public override async Task<PagedResult<FundReportDto>> GetAllAsync(FilterFundReport filter)
     {
         var query = _repository.GetAllAsync();
         query = ApplyFilters(query, filter);
-        List<FundReport>? entities = await query.ToListAsync();
-
-        var ordenedEntities = entities.OrderByDescending(x => x.ReferenceDateAsDate);
         
-        return _mapper.Map<List<FundReportDto>>(ordenedEntities);
+        var totalItems = await query.CountAsync();
+        var items = await query
+            .Skip((filter.Page - 1) * (filter.PageSize ?? totalItems))
+            .Take(filter.PageSize ?? totalItems)
+            .ToListAsync();
+        var ordenedEntities = items.OrderByDescending(x => x.ReferenceDateAsDate);
+
+        return new PagedResult<FundReportDto>(_mapper.Map<List<FundReportDto>>(items), totalItems, filter.Page, filter.PageSize ?? totalItems);
     }
 
     private async Task<FundReport?> GetByReportIdAsync(int id)
@@ -64,8 +69,8 @@ public class FundReportService(
 
         if (fundRepostsRequest == null) throw new Exception("Fetching reports returns null");
 
-        var fundPrices = await _fundDailyPriceService.GetAllAsync(new () { FundId = fund.Id, OrderBy = "Date", SortDirection = "asc" });
-        var oldestDate = fundPrices.First().Date;
+        var fundPrices = await _fundDailyPriceService.GetAllAsync(new () { FundId = fund.Id, SortBy = "Date", SortDirection = "asc" });
+        var oldestDate = fundPrices.Items.First().Date;
         Console.WriteLine("oldestDate: \n" + oldestDate.ToJson());
 
         var items = fundRepostsRequest.Where(fr => fr.ReferenceDate.ConvertToDateTime() > oldestDate);
