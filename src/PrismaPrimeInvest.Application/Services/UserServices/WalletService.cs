@@ -1,6 +1,5 @@
 using AutoMapper;
 using FluentValidation;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using PrismaPrimeInvest.Application.DTOs.InvestDTOs.FundDailyPrice;
 using PrismaPrimeInvest.Application.DTOs.WalletDTOs;
@@ -46,6 +45,16 @@ public class WalletService(
     private readonly IUserService _userService = userService;
     private readonly IWalletUserService _walletUserService = walletUserService;
     private readonly IAuthService _authService = authService;
+
+    protected override IQueryable<Wallet> ApplyFilters(IQueryable<Wallet> query, FilterWallet filter)
+    {
+        query = base.ApplyFilters(query, filter);
+
+        if (filter.WalletId != null && filter.WalletId != Guid.Empty)
+            query = query.Where(w => w.Id == filter.WalletId);
+
+        return query;
+    }
 
     public override async Task<PagedResult<WalletDto>> GetAllAsync(FilterWallet filter)
     {

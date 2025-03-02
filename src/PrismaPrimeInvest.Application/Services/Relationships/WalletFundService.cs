@@ -23,6 +23,17 @@ public class WalletFundService(
     FilterWalletFund
 >(repository, mapper), IWalletFundService 
 {
+    protected override IQueryable<WalletFund> ApplyFilters(IQueryable<WalletFund> query, FilterWalletFund filter)
+    {
+        base.ApplyFilters(query, filter);
+        if (filter.WalletId != null && filter.WalletId != Guid.Empty)
+        {
+            query = query.Where(w => w.WalletId == filter.WalletId);
+        }
+
+        return query;
+    }
+    
     public override async Task<PagedResult<WalletFundDto>> GetAllAsync(FilterWalletFund filter)
     {
         IQueryable<WalletFund>? query = _repository.GetAllAsync().Include(w => w.Fund);
